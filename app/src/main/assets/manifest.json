@@ -1,8 +1,8 @@
 {
-  "name": "Goat Desk",
+  "name": "Bird Desk",
   "short_name": "BirdDesk",
   "description": "Farm animal logging for offline field use",
-  "start_url": "/birddesk.html",
+  "start_url": "birddesk.html",
   "scope": "/",
   "display": "standalone",
   "background_color": "#1a1a1a",
