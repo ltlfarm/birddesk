@@ -332,13 +332,17 @@ input:focus, select:focus, textarea:focus {
     <label>farmOS URL</label>
     <input id="bd-farmos-url" placeholder="https://yourfarm.farmos.net" type="url">
     <label>Username</label>
-    <input id="bd-farmos-user" placeholder="Username">
+    <input id="bd-farmos-user" placeholder="Username" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
     <label>Password</label>
     <div style="display:flex;gap:6px;margin-top:4px;">
       <input id="bd-farmos-pass" type="password" placeholder="Password" style="flex:1;margin:0;">
       <button onclick="bd_togglePass()" id="bd-showPassBtn" style="margin:0;padding:10px;font-size:16px;background:#333;">👁</button>
     </div>
-    <button onclick="bd_saveCfg()" class="wide" style="margin-top:10px;">💾 Save Connection</button>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button onclick="bd_saveCfg()" style="flex:1;">💾 Save</button>
+      <button onclick="bd_testConnection()" class="secondary" style="flex:1;">🔌 Test Connection</button>
+    </div>
+    <div id="bd-test-result" style="font-size:13px;margin-top:6px;"></div>
   </div>
 
   <div class="box">
@@ -583,6 +587,7 @@ async function bd_getToken(cfg) {
       });
       clearTimeout(timer);
       if (res.ok) { const d = await res.json(); return d.access_token; }
+      else { const e2 = await res.text(); console.log('AUTH ERR', res.status, e2.slice(0,200)); }
     } catch(e) { clearTimeout(timer); }
     return null;
   };
@@ -622,6 +627,18 @@ function bd_saveCfg() {
   localStorage.setItem(BD_LS.cfg, JSON.stringify({ url, user, pass }));
   document.getElementById('bd-syncStatus').textContent = 'Saved';
   bd_toast('✅ Connection saved');
+}
+
+async function bd_testConnection() {
+  const cfg = bd_saveCfg();
+  const el = document.getElementById('bd-test-result');
+  if (el) { el.textContent = '⏳ Testing…'; el.style.color = '#888'; }
+  try {
+    const token = await bd_getToken(cfg);
+    if (el) { el.textContent = '✅ Connected'; el.style.color = '#3a7'; }
+  } catch(e) {
+    if (el) { el.textContent = '❌ ' + e.message; el.style.color = '#c00'; }
+  }
 }
 
 function bd_togglePass() {
