@@ -327,29 +327,24 @@ input:focus, select:focus, textarea:focus {
   </div>
 
   <div class="box">
-    <strong>farmOS Connection</strong>
-    <p style="color:#888;font-size:13px;margin:4px 0 10px;">Shared with all FarmDesk apps.</p>
-    <label>farmOS URL</label>
+    <strong>Connection</strong>
+    <label>FarmOS URL</label>
     <input id="bd-farmos-url" placeholder="https://yourfarm.farmos.net" type="url">
     <label>Username</label>
-    <input id="bd-farmos-user" placeholder="Username" autocapitalize="none" autocorrect="off" autocomplete="off" spellcheck="false">
+    <input id="bd-farmos-user" placeholder="farmOS username" autocomplete="username">
     <label>Password</label>
     <div style="display:flex;gap:6px;margin-top:4px;">
-      <input id="bd-farmos-pass" type="password" placeholder="Password" style="flex:1;margin:0;">
-      <button onclick="bd_togglePass()" id="bd-showPassBtn" style="margin:0;padding:10px;font-size:16px;background:#333;">👁</button>
+      <input id="bd-farmos-pass" type="password" placeholder="farmOS password" autocomplete="current-password" style="flex:1;margin-top:0;">
+      <button onclick="bd_togglePass()" id="bd-showPassBtn" style="margin:0;padding:10px 14px;font-size:16px;background:#555;">👁</button>
     </div>
     <div style="display:flex;gap:8px;margin-top:10px;">
-      <button onclick="bd_saveCfg()" style="flex:1;">💾 Save</button>
-      <button onclick="bd_testConnection()" class="secondary" style="flex:1;">🔌 Test Connection</button>
+      <button onclick="bd_testConnection()" style="flex:1;margin:0;">Test Connection</button>
+      <button onclick="bd_fetchAssets()" class="secondary" style="flex:1;margin:0;">🔄 Fetch Birds</button>
     </div>
-    <div id="bd-test-result" style="font-size:13px;margin-top:6px;"></div>
+    <div id="bd-test-result" style="margin-top:8px;font-size:13px;color:#888;"></div>
   </div>
 
-  <div class="box">
-    <strong>Birds &amp; Feeders</strong>
-    <button onclick="bd_fetchAssets()" class="wide secondary" style="margin-top:6px;">⬇️ Fetch from farmOS</button>
-    <div id="bd-fetch-result" style="font-size:13px;color:#888;margin-top:6px;"></div>
-  </div>
+
 
   <div class="box">
     <strong>Flock &amp; Nest Box Config</strong>
