@@ -627,6 +627,7 @@ function bd_saveCfg() {
   localStorage.setItem(BD_LS.cfg, JSON.stringify({ url, user, pass }));
   document.getElementById('bd-syncStatus').textContent = 'Saved';
   bd_toast('✅ Connection saved');
+  return { url, user, pass };
 }
 
 async function bd_testConnection() {
