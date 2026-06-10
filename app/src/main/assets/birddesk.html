@@ -626,12 +626,21 @@ function bd_saveCfg() {
 }
 
 async function bd_testConnection() {
-  const cfg = bd_saveCfg();
+  bd_saveCfg();
+  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
   const el = document.getElementById('bd-test-result');
-  if (el) { el.textContent = '⏳ Testing…'; el.style.color = '#888'; }
+  if (!cfg.url || !cfg.user || !cfg.pass) {
+    if (el) { el.textContent = '⚠️ Save connection settings first'; el.style.color = '#c90'; }
+    return;
+  }
+  if (el) { el.textContent = '⏳ Connecting…'; el.style.color = '#888'; }
   try {
     const token = await bd_getToken(cfg);
-    if (el) { el.textContent = '✅ Connected'; el.style.color = '#3a7'; }
+    const res = await fetch(bd_apiUrl('/api'), { headers: { 'Authorization': 'Bearer ' + token } });
+    let farmName = cfg.url;
+    if (res.ok) { try { const d = await res.json(); farmName = d?.meta?.farm?.name || cfg.url; } catch(e) {} }
+    const via = window._bd_useProxy ? 'via proxy' : 'direct';
+    if (el) { el.textContent = '✅ Connected to: ' + farmName + ' (' + via + ')'; el.style.color = '#3a7'; }
   } catch(e) {
     if (el) { el.textContent = '❌ ' + e.message; el.style.color = '#c00'; }
   }
