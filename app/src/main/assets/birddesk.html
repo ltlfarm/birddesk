@@ -562,44 +562,56 @@ function bd_updateSyncBadge() {
 }
 
 // ===== SHARED MODULE: OAuth2 authentication =====
+// Tries proxy first then direct. Returns a valid token or throws.
 async function bd_getToken(cfg) {
   const tryAuth = async (url, scope) => {
     const body = new URLSearchParams({
-      grant_type: 'password',
-      client_id:  'farm',
+      grant_type: "password",
+      client_id:  "farm",
       username:   cfg.user,
       password:   cfg.pass,
       scope
     });
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 5000);
+    // 5 second timeout per attempt — prevents hanging when proxy is unavailable
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 5000);
     try {
       const res = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body,
-        signal: ctrl.signal
+        signal: controller.signal
       });
       clearTimeout(timer);
-      if (res.ok) { const d = await res.json(); return d.access_token; }
-      else { const e2 = await res.text(); console.log('AUTH ERR', res.status, e2.slice(0,200)); }
-    } catch(e) { clearTimeout(timer); }
+      if (res.ok) {
+        const data = await res.json();
+        return data.access_token;
+      }
+    } catch(e) {
+      clearTimeout(timer);
+    }
     return null;
   };
-  const proxyBase  = '/proxy/oauth/token';
-  const directBase = cfg.url + '/oauth/token';
-  for (const [url, useProxy] of [[proxyBase, true], [directBase, false]]) {
-    try {
-      const token = await tryAuth(url, 'farm_manager');
-      if (token) { window._bd_useProxy = useProxy; return token; }
-    } catch(e) {}
-  }
-  throw new Error('Auth failed: ' + (window._bd_lastAuthErr || 'unknown'));
-}
 
+  const proxyBase  = "/proxy/oauth/token";
+  const directBase = cfg.url + "/oauth/token";
+
+  for (const [url, useProxy] of [
+    [proxyBase,  true],
+    [directBase, false],
+  ]) {
+    try {
+      const token = await tryAuth(url, "farm_manager");
+      if (token) {
+        window._bd_useProxy = useProxy;
+        return token;
+      }
+    } catch(e) { /* try next */ }
+  }
+  throw new Error("Auth failed — check credentials and URL");
+}
 function bd_apiUrl(path) {
-  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  return window._bd_useProxy ? '/proxy' + path : (cfg.url || '') + path;
+  return window._bd_useProxy ? "/proxy" + path : (JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}").url || "") + path;
 }
 
 // ===== SETTINGS / SYNC SCREEN =====
@@ -615,34 +627,43 @@ function bd_renderSync() {
 }
 
 function bd_saveCfg() {
-  const url  = document.getElementById('bd-farmos-url').value.trim().replace(/\/$/, '');
-  const user = document.getElementById('bd-farmos-user').value.trim();
-  const pass = document.getElementById('bd-farmos-pass').value;
-  if (!url || !user || !pass) { bd_toast('⚠️ Fill in all connection fields'); return; }
-  localStorage.setItem(BD_LS.cfg, JSON.stringify({ url, user, pass }));
-  document.getElementById('bd-syncStatus').textContent = 'Saved';
-  bd_toast('✅ Connection saved');
-  return { url, user, pass };
+  const url = document.getElementById("bd-farmos-url")?.value.trim().replace(/\/$/, "") || "";
+  const cfg = {
+    url,
+    user: document.getElementById("bd-farmos-user")?.value.trim() || "",
+    pass: document.getElementById("bd-farmos-pass")?.value || ""
+  };
+  localStorage.setItem(BD_LS.cfg, JSON.stringify(cfg));
+  
+  return cfg;
 }
 
 async function bd_testConnection() {
-  bd_saveCfg();
-  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  const el = document.getElementById('bd-test-result');
-  if (!cfg.url || !cfg.user || !cfg.pass) {
-    if (el) { el.textContent = '⚠️ Save connection settings first'; el.style.color = '#c90'; }
-    return;
-  }
-  if (el) { el.textContent = '⏳ Connecting…'; el.style.color = '#888'; }
+  const cfg = bd_saveCfg();
+  const el = document.getElementById("bd-test-result");
+  el.style.color = "#888";
+  el.textContent = "Connecting...";
   try {
     const token = await bd_getToken(cfg);
-    const res = await fetch(bd_apiUrl('/api'), { headers: { 'Authorization': 'Bearer ' + token } });
-    let farmName = cfg.url;
-    if (res.ok) { try { const d = await res.json(); farmName = d?.meta?.farm?.name || cfg.url; } catch(e) {} }
-    const via = window._bd_useProxy ? 'via proxy' : 'direct';
-    if (el) { el.textContent = '✅ Connected to: ' + farmName + ' (' + via + ')'; el.style.color = '#3a7'; }
+    const res = await fetch(bd_apiUrl("/api"), {
+      headers: { "Authorization": "Bearer " + token }
+    });
+    if (res.ok) {
+      let farmName = cfg.url;
+      try {
+        const data = await res.json();
+        farmName = data?.meta?.farm?.name || cfg.url;
+      } catch(e) { /* use url as fallback */ }
+      const via = window._bd_useProxy ? "via proxy" : "direct";
+      el.textContent = "✅ Connected to: " + farmName + " (" + via + ")";
+      el.style.color = "#3a7";
+    } else {
+      el.textContent = "❌ API error: " + res.status;
+      el.style.color = "#c00";
+    }
   } catch(e) {
-    if (el) { el.textContent = '❌ ' + e.message; el.style.color = '#c00'; }
+    el.textContent = "❌ " + e.message;
+    el.style.color = "#c00";
   }
 }
 
