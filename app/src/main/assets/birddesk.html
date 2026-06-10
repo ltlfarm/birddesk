@@ -564,13 +564,13 @@ function bd_updateSyncBadge() {
 
 // ===== SHARED MODULE: OAuth2 authentication =====
 async function bd_getToken(cfg) {
-  const tryAuth = async (url) => {
+  const tryAuth = async (url, scope) => {
     const body = new URLSearchParams({
       grant_type: 'password',
       client_id:  'farm',
       username:   cfg.user,
       password:   cfg.pass,
-      scope:      'farm_manager'
+      scope
     });
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), 5000);
@@ -586,14 +586,20 @@ async function bd_getToken(cfg) {
     } catch(e) { clearTimeout(timer); }
     return null;
   };
-  const token = await tryAuth(cfg.url + '/oauth/token');
-  if (token) return token;
+  const proxyBase  = '/proxy/oauth/token';
+  const directBase = cfg.url + '/oauth/token';
+  for (const [url, useProxy] of [[proxyBase, true], [directBase, false]]) {
+    try {
+      const token = await tryAuth(url, 'farm_manager');
+      if (token) { window._bd_useProxy = useProxy; return token; }
+    } catch(e) {}
+  }
   throw new Error('Auth failed — check credentials and URL');
 }
 
 function bd_apiUrl(path) {
   const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  return (cfg.url || '') + path;
+  return window._bd_useProxy ? '/proxy' + path : (cfg.url || '') + path;
 }
 
 // ===== SETTINGS / SYNC SCREEN =====
