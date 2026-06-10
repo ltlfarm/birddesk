@@ -594,7 +594,7 @@ async function bd_getToken(cfg) {
       if (token) { window._bd_useProxy = useProxy; return token; }
     } catch(e) {}
   }
-  throw new Error('Auth failed — check credentials and URL');
+  throw new Error('Auth failed: ' + (window._bd_lastAuthErr || 'unknown'));
 }
 
 function bd_apiUrl(path) {
