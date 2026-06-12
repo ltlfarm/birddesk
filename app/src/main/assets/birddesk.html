@@ -174,6 +174,9 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
     <button onclick="bd_openSpeciesManager()" class="wide secondary" style="margin-top:6px;">Manage Species &amp; Breeds</button>
   </div>
 
+  <div class="box">
+    <button onclick="bd_logout()" class="wide secondary">Log Out</button>
+  </div>
   <div id="bd-sync-log" style="font-size:13px;color:#888;padding:10px;white-space:pre-wrap;"></div>
 </div>
 
@@ -437,18 +440,28 @@ async function bd_fetchAssets() {
   try {
     var token = await bd_getToken(cfg);
     var h = bd_authHeaders(token);
-    var res = await fetch(bd_apiUrl("/api/asset/animal?page[limit]=100"), { headers: h });
+    var res = await fetch(bd_apiUrl("/api/asset/animal?page[limit]=100&include=animal_type"), { headers: h });
     if (!res.ok) throw new Error("HTTP " + res.status);
     var data = await res.json();
-    var fetched = (data.data || []).map(function(a) {
+    // Build taxonomy UUID -> name map from included
+    var typeMap = {};
+    (data.included || []).forEach(function(inc) {
+      if (inc.type === "taxonomy_term--animal_type") typeMap[inc.id] = inc.attributes.name || "";
+    });
+    // Filter active only, map species from relationship
+    var fetched = (data.data || []).filter(function(a) {
+      return a.attributes.archived === false || a.attributes.archived === null;
+    }).map(function(a) {
+      var typeRel = a.relationships && a.relationships.animal_type && a.relationships.animal_type.data;
+      var species = typeRel ? (typeMap[typeRel.id] || "") : "";
       return {
         uuid:    a.id,
         name:    a.attributes.name || "",
-        tag:     (a.attributes.tag && a.attributes.tag[0]) ? a.attributes.tag[0].id : "",
-        species: a.attributes.animal_type || "",
+        tag:     (a.attributes.id_tag && a.attributes.id_tag[0]) ? a.attributes.id_tag[0].id : "",
+        species: species,
         breed:   a.attributes.breed || "",
         sex:     a.attributes.sex || "",
-        status:  a.attributes.status || "active",
+        status:  "active",
         notes:   (a.attributes.notes && a.attributes.notes.value) ? a.attributes.notes.value : "",
         flock:   "",
         synced:  true
@@ -513,10 +526,12 @@ function bd_renderBirds() {
 }
 
 function bd_speciesIcon(s) {
-  if (s === "Chicken") return "[Chicken]";
-  if (s === "Duck")    return "[Duck]";
-  if (s === "Goose")   return "[Goose]";
-  return "[Bird]";
+  if (!s) return "";
+  var sl = s.toLowerCase();
+  if (sl === "chicken") return "&#x1F413;";
+  if (sl === "duck")    return "&#x1F986;";
+  if (sl === "goose")   return "&#x1FAA2;";
+  return "&#x1F426;";
 }
 
 function bd_openLogSheet(id) {
@@ -969,6 +984,26 @@ async function bd_pushArchiveBird(uuid, token) {
   var payload = { data: { type: "asset--animal", id: uuid, attributes: { status: "archived" } } };
   var res = await fetch(bd_apiUrl("/api/asset/animal/" + uuid), { method: "PATCH", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
   if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
+}
+
+// ===== LOGOUT =====
+function bd_logout() {
+  if (!confirm("Clear all local data and log out?")) return;
+  var keys = Object.values(BD_LS);
+  keys.forEach(function(k) { localStorage.removeItem(k); });
+  // Also clear StockDesk data
+  ["farmdesk_stock_assets","farmdesk_stock_history","farmdesk_stock_pending",
+   "farmdesk_logs","farmdesk_goats","farmdesk_excludedAnimals","farmdesk_weights",
+   "SD_LS","stockdesk_assets","stockdesk_history","stockdesk_pending"].forEach(function(k) {
+    localStorage.removeItem(k);
+  });
+  bd_birds = []; bd_history = []; bd_pending = []; bd_flocks = [];
+  window._bd_useProxy = false;
+  document.getElementById("bd-syncStatus").textContent = "Offline";
+  bd_updateSyncBadge();
+  bd_renderBirds();
+  bd_renderSync();
+  bd_toast("Logged out");
 }
 
 // ===== STARTUP =====
