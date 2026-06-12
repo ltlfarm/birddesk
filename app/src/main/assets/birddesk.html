@@ -692,7 +692,7 @@ async function bd_fetchAssets() {
       uuid:    a.id,
       name:    a.attributes.name || '',
       tag:     (a.attributes.tag && a.attributes.tag[0]) ? a.attributes.tag[0].id : '',
-      species: a.attributes.species || '',
+      species: a.attributes.animal_type || a.attributes.species || '',
       breed:   a.attributes.breed || '',
       sex:     a.attributes.sex || '',
       status:  a.attributes.status || 'active',
