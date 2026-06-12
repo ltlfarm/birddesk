@@ -13,229 +13,57 @@
 <style>
 * { box-sizing: border-box; }
 body { margin:0; font-family:sans-serif; background:#1a1a1a; color:#eee; font-size:18px; }
-
-header {
-  background:#111;
-  padding:12px 16px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  border-bottom:2px solid #3a7;
-  position:sticky;
-  top:0;
-  z-index:100;
-}
+header { background:#111; padding:12px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:2px solid #3a7; position:sticky; top:0; z-index:100; }
 header span { font-size:22px; font-weight:bold; color:#3a7; }
 header small { color:#888; font-size:14px; }
-
 .screen { display:none; padding:10px; padding-bottom:80px; }
 .screen.active { display:block; }
-
 .box { background:#2a2a2a; padding:14px; margin-bottom:10px; border-radius:8px; }
-
-button {
-  display:inline-block;
-  padding:20px 22px;
-  margin:5px;
-  font-size:18px;
-  background:#3a7;
-  border:none;
-  border-radius:8px;
-  color:white;
-  cursor:pointer;
-  touch-action:manipulation;
-}
+button { display:inline-block; padding:20px 22px; margin:5px; font-size:18px; background:#3a7; border:none; border-radius:8px; color:white; cursor:pointer; touch-action:manipulation; }
 button:active { opacity:0.8; }
 button.secondary { background:#555; }
 button.danger { background:#8b0000; }
 button.wide { width:calc(100% - 10px); display:block; }
 button.sm { padding:10px 16px; font-size:15px; margin:3px; }
-
 label { display:block; margin-top:12px; color:#aaa; font-size:15px; }
-
-input, select, textarea {
-  width:100%;
-  padding:12px;
-  margin-top:4px;
-  font-size:18px;
-  background:#333;
-  color:#eee;
-  border:1px solid #555;
-  border-radius:6px;
-}
-input:focus, select:focus, textarea:focus {
-  outline:none;
-  border-color:#3a7;
-}
-
+input, select, textarea { width:100%; padding:12px; margin-top:4px; font-size:18px; background:#333; color:#eee; border:1px solid #555; border-radius:6px; }
+input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
 .good { background:#1b4d1e !important; border-left:4px solid #3a7; }
 .warn { background:#4d3b00 !important; border-left:4px solid #c90; }
 .bad  { background:#4d0000 !important; border-left:4px solid #c00; }
-
-/* Bird cards */
-.bird-card {
-  background:#2a2a2a;
-  border-radius:8px;
-  padding:12px 14px;
-  margin-bottom:8px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  border-left:4px solid #3a7;
-  cursor:pointer;
-}
+.bird-card { background:#2a2a2a; border-radius:8px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; border-left:4px solid #3a7; cursor:pointer; }
 .bird-card:active { opacity:0.8; }
-.bird-card.archived { border-left-color:#555; opacity:0.5; }
 .bird-card .bird-info { flex:1; }
 .bird-card .bird-tag { font-weight:bold; font-size:16px; color:#3a7; }
 .bird-card .bird-name { font-size:14px; color:#ccc; }
 .bird-card .bird-meta { font-size:13px; color:#888; margin-top:2px; }
 .bird-card .bird-icon { font-size:28px; }
-
-.species-header {
-  font-size:14px;
-  font-weight:bold;
-  color:#888;
-  text-transform:uppercase;
-  letter-spacing:1px;
-  padding:10px 4px 4px;
-}
-
-/* Nest box cards */
-.nest-card {
-  background:#2a2a2a;
-  border-radius:8px;
-  padding:12px 14px;
-  margin-bottom:8px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  border-left:4px solid #68b;
-}
+.species-header { font-size:14px; font-weight:bold; color:#888; text-transform:uppercase; letter-spacing:1px; padding:10px 4px 4px; }
+.nest-card { background:#2a2a2a; border-radius:8px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; border-left:4px solid #68b; }
 .nest-card .nest-name { flex:1; font-size:16px; }
-.nest-card input[type=number] {
-  width:90px;
-  padding:10px;
-  font-size:20px;
-  text-align:center;
-  margin:0;
-}
-
-/* Log entries */
+.nest-card input[type=number] { width:90px; padding:10px; font-size:20px; text-align:center; margin:0; }
 .log { padding:10px; margin-bottom:5px; border-radius:6px; background:#2a2a2a; font-size:15px; text-align:left; }
 .log .log-top { display:flex; align-items:baseline; gap:8px; }
 .log .log-bird { font-weight:bold; color:#3a7; font-size:16px; }
 .log .log-type { color:#aaa; text-transform:uppercase; font-size:12px; }
 .log .log-detail { margin-top:3px; }
 .log .log-time { color:#666; font-size:13px; margin-top:2px; }
-
-/* Bottom nav */
-.bottom-nav {
-  position:fixed;
-  bottom:0; left:0; right:0;
-  background:#111;
-  border-top:1px solid #333;
-  display:flex;
-  z-index:200;
-}
-.bottom-nav button {
-  flex:1;
-  margin:0;
-  padding:12px 4px;
-  font-size:13px;
-  border-radius:0;
-  background:transparent;
-  color:#888;
-  border-right:1px solid #222;
-}
+.bottom-nav { position:fixed; bottom:0; left:0; right:0; background:#111; border-top:1px solid #333; display:flex; z-index:200; }
+.bottom-nav button { flex:1; margin:0; padding:12px 4px; font-size:13px; border-radius:0; background:transparent; color:#888; border-right:1px solid #222; }
 .bottom-nav button:last-child { border-right:none; }
 .bottom-nav button.active { color:#3a7; border-top:2px solid #3a7; }
-
-/* Modal */
-.modal {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.8);
-  z-index:500;
-  overflow-y:auto;
-  padding:20px;
-}
-.modal-box {
-  background:#2a2a2a;
-  border-radius:10px;
-  padding:18px;
-  max-width:480px;
-  margin:0 auto;
-}
+.modal { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:500; overflow-y:auto; padding:20px; }
+.modal-box { background:#2a2a2a; border-radius:10px; padding:18px; max-width:480px; margin:0 auto; }
 .modal-box h3 { margin:0 0 14px; color:#3a7; }
-
-/* Photo viewer */
-#photoViewer {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.95);
-  z-index:600;
-  align-items:center;
-  justify-content:center;
-}
-#photoViewer.open { display:flex; }
-#photoViewerImg { max-width:100%; max-height:100vh; object-fit:contain; }
-#photoViewerClose {
-  position:absolute; top:16px; right:16px;
-  font-size:28px; color:#fff; cursor:pointer; z-index:601;
-}
-
-/* Loading overlay */
-#bdLoading {
-  display:none;
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(0,0,0,0.7);
-  z-index:400;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  gap:12px;
-  color:#fff;
-  font-size:18px;
-}
+#bdLoading { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.7); z-index:400; align-items:center; justify-content:center; flex-direction:column; gap:12px; color:#fff; font-size:18px; }
 #bdLoading.active { display:flex; }
-.spinner {
-  width:40px; height:40px;
-  border:4px solid #333;
-  border-top-color:#3a7;
-  border-radius:50%;
-  animation:spin 0.8s linear infinite;
-}
+.spinner { width:40px; height:40px; border:4px solid #333; border-top-color:#3a7; border-radius:50%; animation:spin 0.8s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
-
-/* Filter chips */
 .filter-chips { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
-.chip {
-  padding:6px 14px;
-  border-radius:20px;
-  font-size:14px;
-  background:#333;
-  color:#aaa;
-  cursor:pointer;
-  border:none;
-  touch-action:manipulation;
-}
+.chip { padding:6px 14px; border-radius:20px; font-size:14px; background:#333; color:#aaa; cursor:pointer; border:none; touch-action:manipulation; }
 .chip.active { background:#3a7; color:#fff; }
-
-/* Egg totals */
-.egg-total-row {
-  display:flex;
-  gap:10px;
-  margin-bottom:10px;
-}
-.egg-total-box {
-  flex:1;
-  background:#1b3a2a;
-  border:1px solid #3a7;
-  border-radius:8px;
-  padding:10px;
-  text-align:center;
-}
+.egg-total-row { display:flex; gap:10px; margin-bottom:10px; }
+.egg-total-box { flex:1; background:#1b3a2a; border:1px solid #3a7; border-radius:8px; padding:10px; text-align:center; }
 .egg-total-box .etl { font-size:12px; color:#888; }
 .egg-total-box .etv { font-size:24px; font-weight:bold; color:#3a7; }
 </style>
@@ -243,87 +71,79 @@ input:focus, select:focus, textarea:focus {
 <body>
 
 <header>
-  <span>🐦 BirdDesk</span>
+  <span>&#x1F426; BirdDesk</span>
   <small id="bd-syncStatus">Offline</small>
 </header>
 
-<div id="bdLoading"><div class="spinner"></div><span id="bdLoadMsg">Loading…</span></div>
+<div id="bdLoading"><div class="spinner"></div><span id="bdLoadMsg">Loading...</span></div>
 
-<!-- ===== BIRDS SCREEN ===== -->
+<!-- BIRDS SCREEN -->
 <div id="bd-screen-birds" class="screen active">
   <div class="box" style="display:flex;gap:8px;align-items:center;">
-    <input id="bd-search" placeholder="🔍 Search tag or name…" oninput="bd_renderBirds()" style="flex:1;margin:0;">
-    <button onclick="bd_openAddBird()" style="margin:0;padding:12px 16px;font-size:20px;" title="Add Bird">+</button>
+    <input id="bd-search" placeholder="Search tag or name..." oninput="bd_renderBirds()" style="flex:1;margin:0;">
+    <button onclick="bd_openAddBird()" style="margin:0;padding:12px 16px;font-size:20px;">+</button>
   </div>
-
   <div style="display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap;">
     <button class="sm secondary" onclick="bd_setSpeciesFilter('')" id="bd-fAll">All</button>
-    <button class="sm secondary" onclick="bd_setSpeciesFilter('Chicken')" id="bd-fChicken">🐔 Chicken</button>
-    <button class="sm secondary" onclick="bd_setSpeciesFilter('Duck')" id="bd-fDuck">🦆 Duck</button>
-    <button class="sm secondary" onclick="bd_setSpeciesFilter('Goose')" id="bd-fGoose">🪿 Goose</button>
-    <button class="sm secondary" onclick="bd_setSpeciesFilter('Other')" id="bd-fOther">🐦 Other</button>
+    <button class="sm secondary" onclick="bd_setSpeciesFilter('Chicken')" id="bd-fChicken">Chicken</button>
+    <button class="sm secondary" onclick="bd_setSpeciesFilter('Duck')" id="bd-fDuck">Duck</button>
+    <button class="sm secondary" onclick="bd_setSpeciesFilter('Goose')" id="bd-fGoose">Goose</button>
+    <button class="sm secondary" onclick="bd_setSpeciesFilter('Other')" id="bd-fOther">Other</button>
   </div>
-
   <div id="bd-bird-list"></div>
 </div>
 
-<!-- ===== EGGS SCREEN ===== -->
+<!-- EGGS SCREEN -->
 <div id="bd-screen-eggs" class="screen">
   <div class="box">
-    <h3 style="margin:0 0 10px;">🥚 Egg Collection</h3>
-
+    <h3 style="margin:0 0 10px;">Egg Collection</h3>
     <div class="egg-total-row">
       <div class="egg-total-box"><div class="etl">Today</div><div class="etv" id="bd-egg-today">0</div></div>
       <div class="egg-total-box"><div class="etl">This Week</div><div class="etv" id="bd-egg-week">0</div></div>
       <div class="egg-total-box"><div class="etl">This Month</div><div class="etv" id="bd-egg-month">0</div></div>
     </div>
-
     <label>Flock</label>
     <select id="bd-egg-flock" onchange="bd_renderNestBoxes()"></select>
-
     <label>Date / Time</label>
     <div style="display:flex;gap:6px;margin-top:4px;">
       <input type="datetime-local" id="bd-egg-time" style="flex:1;">
       <button onclick="bd_setEggNow()" style="padding:10px;margin:0;font-size:13px;">Now</button>
     </div>
-
     <label>Notes</label>
     <input id="bd-egg-notes" placeholder="Optional notes">
   </div>
-
   <div id="bd-nest-boxes"></div>
-
   <div class="box">
-    <button onclick="bd_saveEggs()" class="wide">💾 Save Collection</button>
+    <button onclick="bd_saveEggs()" class="wide">Save Collection</button>
   </div>
 </div>
 
-<!-- ===== HISTORY SCREEN ===== -->
+<!-- HISTORY SCREEN -->
 <div id="bd-screen-history" class="screen">
   <div class="box">
-    <h3 style="margin:0 0 10px;">📋 History</h3>
+    <h3 style="margin:0 0 10px;">History</h3>
     <div class="filter-chips">
       <button class="chip active" onclick="bd_setHistFilter('all',this)">All</button>
-      <button class="chip" onclick="bd_setHistFilter('egg',this)">🥚 Eggs</button>
-      <button class="chip" onclick="bd_setHistFilter('health',this)">🩺 Health</button>
-      <button class="chip" onclick="bd_setHistFilter('feed',this)">🍽️ Feed</button>
-      <button class="chip" onclick="bd_setHistFilter('mortality',this)">☠️ Death</button>
+      <button class="chip" onclick="bd_setHistFilter('egg',this)">Eggs</button>
+      <button class="chip" onclick="bd_setHistFilter('health',this)">Health</button>
+      <button class="chip" onclick="bd_setHistFilter('feed',this)">Feed</button>
+      <button class="chip" onclick="bd_setHistFilter('mortality',this)">Death</button>
     </div>
   </div>
   <div id="bd-history-list"></div>
 </div>
 
-<!-- ===== SYNC SCREEN ===== -->
+<!-- SYNC SCREEN -->
 <div id="bd-screen-sync" class="screen">
   <div class="box">
-    <h3 style="margin:0 0 6px;">🔄 farmOS Sync</h3>
-    <p style="color:#888;font-size:14px;margin:0 0 10px;">Pending logs are saved locally. Push when connected.</p>
+    <h3 style="margin:0 0 6px;">farmOS Sync</h3>
+    <p style="color:#888;font-size:14px;margin:0 0 10px;">Pending logs saved locally. Push when connected.</p>
     <div style="font-size:16px;margin-bottom:10px;">
       Pending: <strong id="bd-pending-count" style="color:#c90;">0</strong>
       &nbsp;|&nbsp;
       Last sync: <span id="bd-last-sync" style="color:#888;">Never</span>
     </div>
-    <button onclick="bd_syncToFarmOS()" class="wide">🔄 Push to farmOS</button>
+    <button onclick="bd_syncToFarmOS()" class="wide">Push to farmOS</button>
   </div>
 
   <div class="box">
@@ -334,111 +154,90 @@ input:focus, select:focus, textarea:focus {
     <input id="bd-farmos-user" placeholder="farmOS username" autocomplete="username">
     <label>Password</label>
     <div style="display:flex;gap:6px;margin-top:4px;">
-      <input id="bd-farmos-pass" type="password" placeholder="farmOS password" autocomplete="current-password" style="flex:1;margin-top:0;">
-      <button onclick="bd_togglePass()" id="bd-showPassBtn" style="margin:0;padding:10px 14px;font-size:16px;background:#555;">👁</button>
+      <input id="bd-farmos-pass" placeholder="farmOS password" type="password" autocomplete="current-password" style="flex:1;margin-top:0;">
+      <button onclick="bd_togglePass()" id="bd-showPassBtn" style="margin:0;padding:10px 14px;font-size:16px;background:#555;">&#x1F441;</button>
     </div>
     <div style="display:flex;gap:8px;margin-top:10px;">
       <button onclick="bd_testConnection()" style="flex:1;margin:0;">Test Connection</button>
-      <button onclick="bd_fetchAssets()" class="secondary" style="flex:1;margin:0;">🔄 Fetch Birds</button>
+      <button onclick="bd_fetchAssets()" class="secondary" style="flex:1;margin:0;">Fetch Birds</button>
     </div>
     <div id="bd-test-result" style="margin-top:8px;font-size:13px;color:#888;"></div>
   </div>
 
-
-
   <div class="box">
     <strong>Flock &amp; Nest Box Config</strong>
-    <button onclick="bd_openFlockManager()" class="wide secondary" style="margin-top:6px;">🐔 Manage Flocks &amp; Nest Boxes</button>
+    <button onclick="bd_openFlockManager()" class="wide secondary" style="margin-top:6px;">Manage Flocks &amp; Nest Boxes</button>
   </div>
 
   <div class="box">
     <strong>Species &amp; Breeds</strong>
-    <button onclick="bd_openSpeciesManager()" class="wide secondary" style="margin-top:6px;">✏️ Manage Species &amp; Breeds</button>
+    <button onclick="bd_openSpeciesManager()" class="wide secondary" style="margin-top:6px;">Manage Species &amp; Breeds</button>
   </div>
 
   <div id="bd-sync-log" style="font-size:13px;color:#888;padding:10px;white-space:pre-wrap;"></div>
 </div>
 
-<!-- ===== LOG SHEET MODAL ===== -->
+<!-- LOG MODAL -->
 <div id="bd-log-modal" class="modal" onclick="bd_closeLogModal(event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3 id="bd-log-modal-title">Log</h3>
-
     <label>Log Type</label>
     <select id="bd-log-type" onchange="bd_renderLogFields()">
-      <option value="weight">⚖️ Weight</option>
-      <option value="med">💉 Med</option>
-      <option value="obs">👁️ Observation</option>
-      <option value="proc">✂️ Procedure</option>
-      <option value="mortality">☠️ Mortality</option>
-      <option value="hatch">🐣 Hatch</option>
-      <option value="feed">🍽️ Feed</option>
+      <option value="weight">Weight</option>
+      <option value="med">Med / Treatment</option>
+      <option value="obs">Observation</option>
+      <option value="proc">Procedure</option>
+      <option value="mortality">Mortality</option>
+      <option value="hatch">Hatch</option>
+      <option value="feed">Feed</option>
     </select>
-
     <label>Time</label>
     <div style="display:flex;gap:6px;margin-top:4px;">
       <input type="datetime-local" id="bd-log-time" style="flex:1;">
       <button onclick="bd_setLogNow()" style="padding:10px;margin:0;font-size:13px;">Now</button>
     </div>
-
     <div id="bd-log-fields" style="margin-top:4px;"></div>
-
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <button onclick="bd_saveLog()" style="flex:1;">💾 Save</button>
+      <button onclick="bd_saveLog()" style="flex:1;">Save</button>
       <button class="secondary" onclick="bd_closeLogModal()" style="flex:0 0 auto;">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ===== ADD/EDIT BIRD MODAL ===== -->
+<!-- ADD/EDIT BIRD MODAL -->
 <div id="bd-bird-modal" class="modal" onclick="bd_closeBirdModal(event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3 id="bd-bird-modal-title">Add Bird</h3>
-
     <label>Tag / ID</label>
     <input id="bd-bird-tag" placeholder="Tag number or ID">
-
     <label>Name (optional)</label>
     <input id="bd-bird-name" placeholder="Name">
-
     <label>Species</label>
     <select id="bd-bird-species" onchange="bd_updateBreedList()">
-      <option>Chicken</option>
-      <option>Duck</option>
-      <option>Goose</option>
-      <option>Other</option>
+      <option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option>
     </select>
-
     <label>Custom Species (if Other)</label>
     <input id="bd-bird-species-custom" placeholder="e.g. Turkey, Quail">
-
     <label>Breed</label>
     <select id="bd-bird-breed"></select>
-
     <label>Custom Breed</label>
     <input id="bd-bird-breed-custom" placeholder="Enter breed if not listed">
-
     <label>Sex</label>
     <select id="bd-bird-sex">
-      <option value="">Unknown</option>
-      <option value="F">Female</option>
-      <option value="M">Male</option>
+      <option value="">Unknown</option><option value="F">Female</option><option value="M">Male</option>
     </select>
-
     <label>Flock</label>
     <select id="bd-bird-flock"></select>
-
     <label>Notes</label>
     <input id="bd-bird-notes" placeholder="Optional notes">
-
     <div style="display:flex;gap:8px;margin-top:14px;">
-      <button onclick="bd_saveBird()" style="flex:1;">💾 Save</button>
+      <button onclick="bd_saveBird()" style="flex:1;">Save</button>
       <button class="secondary" onclick="bd_closeBirdModal()" style="flex:0 0 auto;">Cancel</button>
     </div>
   </div>
 </div>
 
-<!-- ===== FLOCK MANAGER MODAL ===== -->
+<!-- FLOCK MANAGER MODAL -->
 <div id="bd-flock-modal" class="modal" onclick="bd_closeFlockModal(event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Flock &amp; Nest Box Manager</h3>
@@ -455,7 +254,7 @@ input:focus, select:focus, textarea:focus {
   </div>
 </div>
 
-<!-- ===== SPECIES MANAGER MODAL ===== -->
+<!-- SPECIES MANAGER MODAL -->
 <div id="bd-species-modal" class="modal" onclick="bd_closeSpeciesModal(event)">
   <div class="modal-box" onclick="event.stopPropagation()">
     <h3>Species &amp; Breed Manager</h3>
@@ -464,1195 +263,721 @@ input:focus, select:focus, textarea:focus {
   </div>
 </div>
 
-<!-- ===== PHOTO VIEWER ===== -->
-<div id="photoViewer" onclick="bd_closePhotoViewer(event)">
-  <span id="photoViewerClose" onclick="bd_closePhotoViewer(event)">✕</span>
-  <img id="photoViewerImg" src="" alt="">
-</div>
-
-<!-- ===== BOTTOM NAV ===== -->
+<!-- BOTTOM NAV -->
 <nav class="bottom-nav">
-  <button id="bd-nav-birds"   onclick="bd_show('birds')"   class="active">🐦 Birds</button>
-  <button id="bd-nav-eggs"    onclick="bd_show('eggs')">🥚 Eggs</button>
-  <button id="bd-nav-history" onclick="bd_show('history')">📋 History</button>
-  <button id="bd-nav-sync"    onclick="bd_show('sync')">🔄 Sync</button>
+  <button id="bd-nav-birds"   onclick="bd_show('birds')"   class="active">Birds</button>
+  <button id="bd-nav-eggs"    onclick="bd_show('eggs')">Eggs</button>
+  <button id="bd-nav-history" onclick="bd_show('history')">History</button>
+  <button id="bd-nav-sync"    onclick="bd_show('sync')">Sync</button>
 </nav>
 
 <script>
 // ===== BIRDDESK MODULE =====
-// Prefix: bd_ (functions), bd- (IDs), BD_LS (localStorage)
-// Stand-alone app, drop-in ready for FarmDesk merge
+// Prefix: bd_ functions, BD_LS keys. Drop-in ready for FarmDesk merge.
 
-// ===== SHARED MODULE: localStorage keys =====
 const BD_LS = {
-  cfg:      'farmdesk_cfg',
-  assets:   'farmdesk_bird_assets',
-  history:  'farmdesk_bird_history',
-  pending:  'farmdesk_bird_pending',
-  lastSync: 'farmdesk_bird_lastsync',
-  flocks:   'farmdesk_bird_flocks',
-  species:  'farmdesk_bird_species',
+  cfg:      "farmdesk_cfg",
+  assets:   "farmdesk_bird_assets",
+  history:  "farmdesk_bird_history",
+  pending:  "farmdesk_bird_pending",
+  lastSync: "farmdesk_bird_lastsync",
+  flocks:   "farmdesk_bird_flocks",
+  species:  "farmdesk_bird_species"
 };
 
-// ===== STATE =====
-let bd_birds   = JSON.parse(localStorage.getItem(BD_LS.assets)  || '[]');
-let bd_history = JSON.parse(localStorage.getItem(BD_LS.history) || '[]');
-let bd_pending = JSON.parse(localStorage.getItem(BD_LS.pending) || '[]');
-let bd_flocks  = JSON.parse(localStorage.getItem(BD_LS.flocks)  || '[]');
+let bd_birds   = JSON.parse(localStorage.getItem(BD_LS.assets)  || "[]");
+let bd_history = JSON.parse(localStorage.getItem(BD_LS.history) || "[]");
+let bd_pending = JSON.parse(localStorage.getItem(BD_LS.pending) || "[]");
+let bd_flocks  = JSON.parse(localStorage.getItem(BD_LS.flocks)  || "[]");
 let bd_speciesCfg = JSON.parse(localStorage.getItem(BD_LS.species) || JSON.stringify({
-  Chicken: ['Rhode Island Red','Leghorn','Barred Rock','Buff Orpington','Australorp','Silkie'],
-  Duck:    ['Pekin','Khaki Campbell','Rouen','Muscovy','Indian Runner'],
-  Goose:   ['Toulouse','Embden','Chinese','African','Pilgrim'],
+  Chicken: ["Rhode Island Red","Leghorn","Barred Rock","Buff Orpington","Australorp","Silkie"],
+  Duck:    ["Pekin","Khaki Campbell","Rouen","Muscovy","Indian Runner"],
+  Goose:   ["Toulouse","Embden","Chinese","African","Pilgrim"],
   Other:   []
 }));
 
-let bd_currentBirdUUID = null; // bird being logged
-let bd_editBirdUUID    = null; // bird being edited
-let bd_histFilter      = 'all';
-let bd_speciesFilter   = '';
+let bd_currentBirdId = null;
+let bd_editBirdId = null;
+let bd_histFilter = "all";
+let bd_speciesFilterActive = "";
 
-// ===== SHARED MODULE: screen nav =====
 function bd_show(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('bd-screen-' + id);
-  if (el) el.classList.add('active');
-  document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.remove('active'));
-  const nav = document.getElementById('bd-nav-' + id);
-  if (nav) nav.classList.add('active');
-  if (id === 'birds')   bd_renderBirds();
-  if (id === 'eggs')    bd_initEggs();
-  if (id === 'history') bd_renderHistory();
-  if (id === 'sync')    bd_renderSync();
+  document.querySelectorAll(".screen").forEach(function(s) { s.classList.remove("active"); });
+  var el = document.getElementById("bd-screen-" + id);
+  if (el) el.classList.add("active");
+  document.querySelectorAll(".bottom-nav button").forEach(function(b) { b.classList.remove("active"); });
+  var nav = document.getElementById("bd-nav-" + id);
+  if (nav) nav.classList.add("active");
+  if (id === "birds")   bd_renderBirds();
+  if (id === "eggs")    bd_initEggs();
+  if (id === "history") bd_renderHistory();
+  if (id === "sync")    bd_renderSync();
 }
 
-// ===== SHARED MODULE: loading overlay =====
 function bd_setLoading(on, msg) {
-  const el = document.getElementById('bdLoading');
+  var el = document.getElementById("bdLoading");
   if (!el) return;
-  if (on) {
-    document.getElementById('bdLoadMsg').textContent = msg || 'Loading…';
-    el.classList.add('active');
-  } else {
-    el.classList.remove('active');
-  }
+  if (on) { document.getElementById("bdLoadMsg").textContent = msg || "Loading..."; el.classList.add("active"); }
+  else el.classList.remove("active");
 }
 
-// ===== SHARED MODULE: toast =====
 function bd_toast(msg) {
-  let t = document.getElementById('bd-appToast');
+  var t = document.getElementById("bd-toast");
   if (!t) {
-    t = document.createElement('div');
-    t.id = 'bd-appToast';
-    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;z-index:9998;opacity:0;transition:opacity 0.3s;pointer-events:none;';
+    t = document.createElement("div");
+    t.id = "bd-toast";
+    t.style.cssText = "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:10px 18px;border-radius:20px;font-size:14px;z-index:9998;opacity:0;transition:opacity 0.3s;pointer-events:none;";
     document.body.appendChild(t);
   }
   t.textContent = msg;
-  t.style.opacity = '1';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 2500);
+  t.style.opacity = "1";
+  clearTimeout(t._t);
+  t._t = setTimeout(function() { t.style.opacity = "0"; }, 2500);
 }
 
-// ===== SHARED MODULE: sync badge =====
 function bd_updateSyncBadge() {
-  const count = bd_pending.filter(p => !p.synced).length;
-  const el = document.getElementById('bd-nav-sync');
-  if (el) el.textContent = count > 0 ? `🔄 Sync (${count})` : '🔄 Sync';
-  const pc = document.getElementById('bd-pending-count');
+  var count = bd_pending.filter(function(p) { return !p.synced; }).length;
+  var el = document.getElementById("bd-nav-sync");
+  if (el) el.textContent = count > 0 ? "Sync (" + count + ")" : "Sync";
+  var pc = document.getElementById("bd-pending-count");
   if (pc) pc.textContent = count;
 }
 
 // ===== SHARED MODULE: OAuth2 authentication =====
-// Tries proxy first then direct. Returns a valid token or throws.
-async function bd_getToken(cfg) {
-  const tryAuth = async (url, scope) => {
-    const body = new URLSearchParams({
-      grant_type: "password",
-      client_id:  "farm",
-      username:   cfg.user,
-      password:   cfg.pass,
-      scope
-    });
-    // 5 second timeout per attempt — prevents hanging when proxy is unavailable
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 5000);
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body,
-        signal: controller.signal
-      });
-      clearTimeout(timer);
-      if (res.ok) {
-        const data = await res.json();
-        return data.access_token;
-      }
-    } catch(e) {
-      clearTimeout(timer);
-    }
-    return null;
-  };
-
-  const proxyBase  = "/proxy/oauth/token";
-  const directBase = cfg.url + "/oauth/token";
-
-  for (const [url, useProxy] of [
-    [proxyBase,  true],
-    [directBase, false],
-  ]) {
-    try {
-      const token = await tryAuth(url, "farm_manager");
-      if (token) {
-        window._bd_useProxy = useProxy;
-        return token;
-      }
-    } catch(e) { /* try next */ }
-  }
-  throw new Error("Auth failed — check credentials and URL");
-}
-function bd_apiUrl(path) {
-  return window._bd_useProxy ? "/proxy" + path : (JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}").url || "") + path;
-}
-
-// ===== SETTINGS / SYNC SCREEN =====
-function bd_renderSync() {
-  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  if (cfg.url)  document.getElementById('bd-farmos-url').value  = cfg.url;
-  if (cfg.user) document.getElementById('bd-farmos-user').value = cfg.user;
-  if (cfg.pass) document.getElementById('bd-farmos-pass').value = cfg.pass;
-  const ls = localStorage.getItem(BD_LS.lastSync);
-  document.getElementById('bd-last-sync').textContent = ls || 'Never';
-  bd_updateSyncBadge();
-  document.getElementById('bd-sync-log').textContent = '';
-}
-
+// Exact GoatDesk pattern — proxy first then direct
 function bd_saveCfg() {
-  const url = document.getElementById("bd-farmos-url")?.value.trim().replace(/\/$/, "") || "";
-  const cfg = {
-    url,
-    user: document.getElementById("bd-farmos-user")?.value.trim() || "",
-    pass: document.getElementById("bd-farmos-pass")?.value || ""
-  };
+  var url  = (document.getElementById("bd-farmos-url")  && document.getElementById("bd-farmos-url").value)  ? document.getElementById("bd-farmos-url").value.trim().replace(/\/$/, "") : "";
+  var user = (document.getElementById("bd-farmos-user") && document.getElementById("bd-farmos-user").value) ? document.getElementById("bd-farmos-user").value.trim() : "";
+  var pass = (document.getElementById("bd-farmos-pass") && document.getElementById("bd-farmos-pass").value) ? document.getElementById("bd-farmos-pass").value : "";
+  var cfg  = { url: url, user: user, pass: pass };
   localStorage.setItem(BD_LS.cfg, JSON.stringify(cfg));
-  
   return cfg;
 }
 
-async function bd_testConnection() {
-  const cfg = bd_saveCfg();
-  const el = document.getElementById("bd-test-result");
-  el.style.color = "#888";
-  el.textContent = "Connecting...";
-  try {
-    const token = await bd_getToken(cfg);
-    const res = await fetch(bd_apiUrl("/api"), {
-      headers: { "Authorization": "Bearer " + token }
-    });
-    if (res.ok) {
-      let farmName = cfg.url;
-      try {
-        const data = await res.json();
-        farmName = data?.meta?.farm?.name || cfg.url;
-      } catch(e) { /* use url as fallback */ }
-      const via = window._bd_useProxy ? "via proxy" : "direct";
-      el.textContent = "✅ Connected to: " + farmName + " (" + via + ")";
-      el.style.color = "#3a7";
-    } else {
-      el.textContent = "❌ API error: " + res.status;
-      el.style.color = "#c00";
-    }
-  } catch(e) {
-    el.textContent = "❌ " + e.message;
-    el.style.color = "#c00";
+async function bd_getToken(cfg) {
+  var tryAuth = async function(url, scope) {
+    var body = new URLSearchParams({ grant_type: "password", client_id: "farm", username: cfg.user, password: cfg.pass, scope: scope });
+    var controller = new AbortController();
+    var timer = setTimeout(function() { controller.abort(); }, 5000);
+    try {
+      var res = await fetch(url, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body, signal: controller.signal });
+      clearTimeout(timer);
+      if (res.ok) { var data = await res.json(); return data.access_token; }
+    } catch(e) { clearTimeout(timer); }
+    return null;
+  };
+  var attempts = [["/proxy/oauth/token", true], [cfg.url + "/oauth/token", false]];
+  for (var i = 0; i < attempts.length; i++) {
+    try {
+      var token = await tryAuth(attempts[i][0], "farm_manager");
+      if (token) { window._bd_useProxy = attempts[i][1]; return token; }
+    } catch(e) {}
   }
+  throw new Error("Auth failed - check credentials and URL");
+}
+
+function bd_apiUrl(path) {
+  var cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}");
+  return window._bd_useProxy ? "/proxy" + path : (cfg.url || "") + path;
+}
+
+function bd_authHeaders(token) {
+  return { "Authorization": "Bearer " + token, "Accept": "application/vnd.api+json" };
+}
+
+function bd_postHeaders(token) {
+  return { "Authorization": "Bearer " + token, "Content-Type": "application/vnd.api+json", "Accept": "application/vnd.api+json" };
+}
+
+function bd_renderSync() {
+  var cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}");
+  if (cfg.url  && document.getElementById("bd-farmos-url"))  document.getElementById("bd-farmos-url").value  = cfg.url;
+  if (cfg.user && document.getElementById("bd-farmos-user")) document.getElementById("bd-farmos-user").value = cfg.user;
+  if (cfg.pass && document.getElementById("bd-farmos-pass")) document.getElementById("bd-farmos-pass").value = cfg.pass;
+  var ls = localStorage.getItem(BD_LS.lastSync);
+  document.getElementById("bd-last-sync").textContent = ls || "Never";
+  bd_updateSyncBadge();
 }
 
 function bd_togglePass() {
-  const p = document.getElementById('bd-farmos-pass');
-  const btn = document.getElementById('bd-showPassBtn');
-  p.type = p.type === 'password' ? 'text' : 'password';
-  btn.textContent = p.type === 'password' ? '👁' : '🙈';
+  var p = document.getElementById("bd-farmos-pass");
+  var btn = document.getElementById("bd-showPassBtn");
+  p.type = p.type === "password" ? "text" : "password";
+  btn.textContent = p.type === "password" ? "\uD83D\uDC41" : "\uD83D\uDE48";
 }
 
-// ===== FETCH ASSETS FROM FARMOS =====
-async function bd_fetchAssets() {
-  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  if (!cfg.url || !cfg.user) { bd_toast('⚠️ Save connection settings first'); return; }
-  bd_setLoading(true, 'Fetching birds from farmOS…');
-  const result = document.getElementById('bd-fetch-result') || {textContent:'',style:{}};
+async function bd_testConnection() {
+  bd_saveCfg();
+  var cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}");
+  var el = document.getElementById("bd-test-result");
+  if (!cfg.url || !cfg.user || !cfg.pass) {
+    if (el) { el.textContent = "Fill in all fields first"; el.style.color = "#c90"; }
+    return;
+  }
+  if (el) { el.textContent = "Connecting..."; el.style.color = "#888"; }
   try {
-    const token = await bd_getToken(cfg);
-    // Fetch animal assets
-    const res = await fetch(bd_apiUrl('/api/asset/animal?filter[status]=active&page[limit]=100'), {
-      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.api+json' }
+    var token = await bd_getToken(cfg);
+    var res = await fetch(bd_apiUrl("/api"), { headers: bd_authHeaders(token) });
+    var farmName = cfg.url;
+    if (res.ok) { try { var d = await res.json(); farmName = (d && d.meta && d.meta.farm && d.meta.farm.name) ? d.meta.farm.name : cfg.url; } catch(e) {} }
+    var via = window._bd_useProxy ? "via proxy" : "direct";
+    if (el) { el.textContent = "Connected to: " + farmName + " (" + via + ")"; el.style.color = "#3a7"; }
+    document.getElementById("bd-syncStatus").textContent = "Connected";
+  } catch(e) {
+    if (el) { el.textContent = e.message; el.style.color = "#c00"; }
+  }
+}
+
+async function bd_fetchAssets() {
+  bd_saveCfg();
+  var cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}");
+  if (!cfg.url || !cfg.user || !cfg.pass) { bd_toast("Save connection settings first"); return; }
+  bd_setLoading(true, "Fetching birds from farmOS...");
+  var el = document.getElementById("bd-test-result");
+  try {
+    var token = await bd_getToken(cfg);
+    var h = bd_authHeaders(token);
+    var res = await fetch(bd_apiUrl("/api/asset/animal?page[limit]=100"), { headers: h });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    var data = await res.json();
+    var fetched = (data.data || []).map(function(a) {
+      return {
+        uuid:    a.id,
+        name:    a.attributes.name || "",
+        tag:     (a.attributes.tag && a.attributes.tag[0]) ? a.attributes.tag[0].id : "",
+        species: a.attributes.animal_type || "",
+        breed:   a.attributes.breed || "",
+        sex:     a.attributes.sex || "",
+        status:  a.attributes.status || "active",
+        notes:   (a.attributes.notes && a.attributes.notes.value) ? a.attributes.notes.value : "",
+        flock:   "",
+        synced:  true
+      };
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    const fetched = (data.data || []).map(a => ({
-      uuid:    a.id,
-      name:    a.attributes.name || '',
-      tag:     (a.attributes.tag && a.attributes.tag[0]) ? a.attributes.tag[0].id : '',
-      species: a.attributes.animal_type || a.attributes.species || '',
-      breed:   a.attributes.breed || '',
-      sex:     a.attributes.sex || '',
-      status:  a.attributes.status || 'active',
-      notes:   (a.attributes.notes && a.attributes.notes.value) ? a.attributes.notes.value : '',
-      flock:   '',
-      synced:  true,
-    }));
-    // Fetch equipment (feeders)
-    const resEq = await fetch(bd_apiUrl('/api/asset/equipment?filter[status]=active&page[limit]=50'), {
-      headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.api+json' }
-    });
-    let feeders = [];
+    var resEq = await fetch(bd_apiUrl("/api/asset/equipment?page[limit]=50"), { headers: h });
+    var feeders = [];
     if (resEq.ok) {
-      const deq = await resEq.json();
-      feeders = (deq.data || []).map(a => ({
-        uuid:   a.id,
-        name:   a.attributes.name || '',
-        type:   'feeder',
-        status: 'active',
-        synced: true,
-      }));
+      var deq = await resEq.json();
+      feeders = (deq.data || []).map(function(a) {
+        return { uuid: a.id, name: a.attributes.name || "", type: "feeder", status: "active", synced: true };
+      });
     }
-    // Merge: keep local-only birds not in fetched set
-    const fetchedUUIDs = new Set(fetched.map(b => b.uuid));
-    const localOnly = bd_birds.filter(b => !b.uuid || !fetchedUUIDs.has(b.uuid));
-    bd_birds = [...fetched, ...feeders, ...localOnly.filter(b => b.type !== 'feeder')];
+    var fetchedUUIDs = {};
+    fetched.forEach(function(b) { if (b.uuid) fetchedUUIDs[b.uuid] = true; });
+    var localOnly = bd_birds.filter(function(b) { return !b.uuid || !fetchedUUIDs[b.uuid]; });
+    bd_birds = fetched.concat(feeders).concat(localOnly.filter(function(b) { return b.type !== "feeder"; }));
     localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
-    result.textContent = `✅ Fetched ${fetched.length} birds, ${feeders.length} feeders`;
-    result.style.color = '#3a7';
-    bd_toast('✅ Fetched ' + fetched.length + ' birds');
+    if (el) { el.textContent = "Fetched " + fetched.length + " birds, " + feeders.length + " feeders"; el.style.color = "#3a7"; }
+    bd_toast("Fetched " + fetched.length + " birds");
     bd_renderBirds();
   } catch(e) {
-    result.textContent = '❌ ' + e.message;
-    result.style.color = '#c00';
-    bd_toast('❌ Fetch failed: ' + e.message);
+    if (el) { el.textContent = e.message; el.style.color = "#c00"; }
+    bd_toast("Fetch failed: " + e.message);
   }
   bd_setLoading(false);
 }
 
-// ===== BIRDS SCREEN =====
-let bd_speciesFilterActive = '';
 function bd_setSpeciesFilter(s) {
   bd_speciesFilterActive = s;
-  document.querySelectorAll('[id^="bd-f"]').forEach(b => b.classList.remove('active'));
-  const key = s || 'All';
-  const btn = document.getElementById('bd-f' + key);
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll("[id^='bd-f']").forEach(function(b) { b.classList.remove("active"); });
+  var btn = document.getElementById("bd-f" + (s || "All"));
+  if (btn) btn.classList.add("active");
   bd_renderBirds();
 }
 
 function bd_renderBirds() {
-  const list = document.getElementById('bd-bird-list');
+  var list = document.getElementById("bd-bird-list");
   if (!list) return;
-  const search = (document.getElementById('bd-search')?.value || '').toLowerCase();
-  let birds = bd_birds.filter(b => b.type !== 'feeder' && b.status !== 'archived');
-  if (bd_speciesFilterActive) birds = birds.filter(b => b.species === bd_speciesFilterActive);
-  if (search) birds = birds.filter(b =>
-    (b.tag || '').toLowerCase().includes(search) ||
-    (b.name || '').toLowerCase().includes(search)
-  );
-  if (!birds.length) {
-    list.innerHTML = '<div class="box" style="color:#888;text-align:center;">No birds found. Add one with + or fetch from farmOS.</div>';
-    return;
-  }
-  // Group by species
-  const groups = {};
-  birds.forEach(b => {
-    const s = b.species || 'Unknown';
-    if (!groups[s]) groups[s] = [];
-    groups[s].push(b);
-  });
-  const speciesOrder = ['Chicken','Duck','Goose','Other','Unknown'];
-  const sorted = [...new Set([...speciesOrder, ...Object.keys(groups)])].filter(s => groups[s]);
-  list.innerHTML = sorted.map(s => `
-    <div class="species-header">${bd_speciesIcon(s)} ${s}</div>
-    ${groups[s].map(b => `
-      <div class="bird-card" onclick="bd_openLogSheet('${b.uuid || b._localId}')">
-        <div class="bird-icon">${bd_speciesIcon(b.species)}</div>
-        <div class="bird-info">
-          <div class="bird-tag">${b.tag || '(no tag)'}</div>
-          <div class="bird-name">${b.name || ''}</div>
-          <div class="bird-meta">${[b.breed, b.sex === 'F' ? '♀' : b.sex === 'M' ? '♂' : '', b.flock ? '📦 '+b.flock : ''].filter(Boolean).join(' · ')}</div>
-        </div>
-        <button onclick="event.stopPropagation();bd_openEditBird('${b.uuid || b._localId}')" style="margin:0;padding:10px 14px;font-size:16px;background:#333;">✏️</button>
-      </div>
-    `).join('')}
-  `).join('');
+  var search = (document.getElementById("bd-search") ? document.getElementById("bd-search").value : "").toLowerCase();
+  var birds = bd_birds.filter(function(b) { return b.type !== "feeder" && b.status !== "archived"; });
+  if (bd_speciesFilterActive) birds = birds.filter(function(b) { return b.species === bd_speciesFilterActive; });
+  if (search) birds = birds.filter(function(b) { return (b.tag || "").toLowerCase().indexOf(search) >= 0 || (b.name || "").toLowerCase().indexOf(search) >= 0; });
+  if (!birds.length) { list.innerHTML = "<div class='box' style='color:#888;text-align:center;'>No birds found. Add one with + or fetch from farmOS.</div>"; return; }
+  var groups = {};
+  birds.forEach(function(b) { var s = b.species || "Unknown"; if (!groups[s]) groups[s] = []; groups[s].push(b); });
+  var order = ["Chicken","Duck","Goose","Other","Unknown"];
+  var keys = Object.keys(groups);
+  var sorted = order.filter(function(s) { return groups[s]; }).concat(keys.filter(function(s) { return order.indexOf(s) < 0 && groups[s]; }));
+  list.innerHTML = sorted.map(function(s) {
+    return "<div class='species-header'>" + bd_speciesIcon(s) + " " + s + "</div>" +
+      groups[s].map(function(b) {
+        var id = b.uuid || b._localId;
+        var meta = [b.breed, b.sex === "F" ? "Female" : b.sex === "M" ? "Male" : "", b.flock ? b.flock : ""].filter(function(x) { return x; }).join(" - ");
+        return "<div class='bird-card' onclick=\"bd_openLogSheet('" + id + "')\">" +
+          "<div class='bird-icon'>" + bd_speciesIcon(b.species) + "</div>" +
+          "<div class='bird-info'><div class='bird-tag'>" + (b.tag || "(no tag)") + "</div><div class='bird-name'>" + (b.name || "") + "</div><div class='bird-meta'>" + meta + "</div></div>" +
+          "<button onclick=\"event.stopPropagation();bd_openEditBird('" + id + "')\" style='margin:0;padding:10px 14px;font-size:16px;background:#333;'>Edit</button>" +
+          "</div>";
+      }).join("");
+  }).join("");
 }
 
 function bd_speciesIcon(s) {
-  if (s === 'Chicken') return '🐔';
-  if (s === 'Duck')    return '🦆';
-  if (s === 'Goose')   return '🪿';
-  return '🐦';
+  if (s === "Chicken") return "[Chicken]";
+  if (s === "Duck")    return "[Duck]";
+  if (s === "Goose")   return "[Goose]";
+  return "[Bird]";
 }
 
-// ===== LOG SHEET =====
 function bd_openLogSheet(id) {
-  bd_currentBirdUUID = id;
-  const bird = bd_birds.find(b => (b.uuid || b._localId) === id);
-  const modal = document.getElementById('bd-log-modal');
-  document.getElementById('bd-log-modal-title').textContent =
-    '📋 Log — ' + (bird ? (bird.tag || bird.name || 'Bird') : 'Bird');
-  // Set default time to now
-  const now = new Date();
-  now.setSeconds(0,0);
-  document.getElementById('bd-log-time').value = now.toISOString().slice(0,16);
+  bd_currentBirdId = id;
+  var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === id; })[0];
+  document.getElementById("bd-log-modal-title").textContent = "Log - " + (bird ? (bird.tag || bird.name || "Bird") : "Bird");
+  var now = new Date(); now.setSeconds(0,0);
+  document.getElementById("bd-log-time").value = now.toISOString().slice(0,16);
   bd_renderLogFields();
-  modal.style.display = 'block';
+  document.getElementById("bd-log-modal").style.display = "block";
 }
 
-function bd_setLogNow() {
-  const now = new Date(); now.setSeconds(0,0);
-  document.getElementById('bd-log-time').value = now.toISOString().slice(0,16);
-}
+function bd_setLogNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-log-time").value = now.toISOString().slice(0,16); }
 
 function bd_closeLogModal(e) {
-  if (!e || e.target === document.getElementById('bd-log-modal') || e.type !== 'click' || !e.target.closest) {
-    document.getElementById('bd-log-modal').style.display = 'none';
-  }
+  if (!e || e.target === document.getElementById("bd-log-modal")) document.getElementById("bd-log-modal").style.display = "none";
 }
 
 function bd_renderLogFields() {
-  const t = document.getElementById('bd-log-type').value;
-  const box = document.getElementById('bd-log-fields');
-  if (t === 'weight') {
-    box.innerHTML = `
-      <label>Weight</label>
-      <div style="display:flex;gap:6px;margin-top:4px;">
-        <input id="bd-f-weight" type="number" step="0.01" placeholder="0.00" style="flex:1;">
-        <select id="bd-f-weight-unit" style="width:90px;margin:0;">
-          <option>lbs</option><option>g</option><option>kg</option>
-        </select>
-      </div>
-      <label>Notes</label>
-      <input id="bd-f-notes" placeholder="Optional notes">
-    `;
-  } else if (t === 'med') {
-    const feeders = bd_birds.filter(b => b.type === 'feeder');
-    box.innerHTML = `
-      <label>Medication</label>
-      <input id="bd-f-med" placeholder="Med name">
-      <label>Dose</label>
-      <div style="display:flex;gap:6px;margin-top:4px;">
-        <input id="bd-f-dose" type="number" step="0.01" placeholder="0.00" style="flex:1;">
-        <select id="bd-f-dose-unit" style="width:90px;margin:0;">
-          <option>ml</option><option>cc</option><option>mg</option><option>tablet</option>
-        </select>
-      </div>
-      <label>Route</label>
-      <select id="bd-f-route">
-        <option>Oral</option><option>SQ</option><option>IM</option><option>Topical</option><option>IV</option>
-      </select>
-      <label>Notes</label>
-      <input id="bd-f-notes" placeholder="Optional notes">
-    `;
-  } else if (t === 'obs') {
-    box.innerHTML = `
-      <label>Observation</label>
-      <input id="bd-f-obs-title" placeholder="Brief title">
-      <label>Details</label>
-      <textarea id="bd-f-notes" rows="3" placeholder="Details…"></textarea>
-    `;
-  } else if (t === 'proc') {
-    box.innerHTML = `
-      <label>Procedure</label>
-      <input id="bd-f-proc" placeholder="e.g. Banding, Deworming">
-      <label>Notes</label>
-      <textarea id="bd-f-notes" rows="2" placeholder="Details…"></textarea>
-    `;
-  } else if (t === 'mortality') {
-    box.innerHTML = `
-      <label>Cause of Death</label>
-      <select id="bd-f-cause">
-        <option>Unknown</option>
-        <option>Predator</option>
-        <option>Disease</option>
-        <option>Injury</option>
-        <option>Natural</option>
-        <option>Culled</option>
-        <option>Other</option>
-      </select>
-      <label>Notes</label>
-      <textarea id="bd-f-notes" rows="2" placeholder="Details…"></textarea>
-      <p style="color:#c90;font-size:13px;margin-top:8px;">⚠️ This will archive the bird in farmOS on sync.</p>
-    `;
-  } else if (t === 'hatch') {
-    box.innerHTML = `
-      <label>Species</label>
-      <select id="bd-f-hatch-species">
-        <option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option>
-      </select>
-      <label>Breed</label>
-      <input id="bd-f-hatch-breed" placeholder="Breed (optional)">
-      <label>Count Hatched</label>
-      <input id="bd-f-hatch-count" type="number" min="1" step="1" placeholder="e.g. 8">
-      <label>Parent Tag (optional)</label>
-      <input id="bd-f-hatch-parent" placeholder="Mother tag">
-      <label>Flock</label>
-      <select id="bd-f-hatch-flock">${bd_flocks.map(f=>`<option>${f.name}</option>`).join('')}</select>
-      <label>Notes</label>
-      <input id="bd-f-notes" placeholder="Optional notes">
-      <p style="color:#888;font-size:13px;margin-top:8px;">Creates placeholder bird assets. Tag each bird later from the Birds screen.</p>
-    `;
-  } else if (t === 'feed') {
-    const feeders = bd_birds.filter(b => b.type === 'feeder');
-    box.innerHTML = `
-      <label>Feeder</label>
-      <select id="bd-f-feeder">
-        ${feeders.length ? feeders.map(f=>`<option value="${f.uuid||f._localId}">${f.name}</option>`).join('') : '<option value="">No feeders — fetch from farmOS</option>'}
-      </select>
-      <label>Feed Type</label>
-      <input id="bd-f-feed-type" placeholder="e.g. Layer Pellets, Crumble">
-      <label>Amount</label>
-      <div style="display:flex;gap:6px;margin-top:4px;">
-        <input id="bd-f-feed-amount" type="number" step="0.1" placeholder="0.0" style="flex:1;">
-        <select id="bd-f-feed-unit" style="width:90px;margin:0;">
-          <option>lbs</option><option>kg</option><option>cups</option><option>scoops</option>
-        </select>
-      </div>
-      <label>Notes</label>
-      <input id="bd-f-notes" placeholder="Optional notes">
-    `;
+  var t = document.getElementById("bd-log-type").value;
+  var box = document.getElementById("bd-log-fields");
+  if (t === "weight") {
+    box.innerHTML = "<label>Weight</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-weight' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-weight-unit' style='width:90px;margin:0;'><option>lbs</option><option>g</option><option>kg</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
+  } else if (t === "med") {
+    box.innerHTML = "<label>Medication</label><input id='bd-f-med' placeholder='Med name'><label>Dose</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-dose' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-dose-unit' style='width:90px;margin:0;'><option>ml</option><option>cc</option><option>mg</option><option>tablet</option></select></div><label>Route</label><select id='bd-f-route'><option>Oral</option><option>SQ</option><option>IM</option><option>Topical</option></select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
+  } else if (t === "obs") {
+    box.innerHTML = "<label>Observation</label><input id='bd-f-obs-title' placeholder='Brief title'><label>Details</label><textarea id='bd-f-notes' rows='3'></textarea>";
+  } else if (t === "proc") {
+    box.innerHTML = "<label>Procedure</label><input id='bd-f-proc' placeholder='e.g. Banding'><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea>";
+  } else if (t === "mortality") {
+    box.innerHTML = "<label>Cause</label><select id='bd-f-cause'><option>Unknown</option><option>Predator</option><option>Disease</option><option>Injury</option><option>Natural</option><option>Culled</option><option>Other</option></select><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea><p style='color:#c90;font-size:13px;margin-top:8px;'>This will archive the bird in farmOS on sync.</p>";
+  } else if (t === "hatch") {
+    var flockOpts = bd_flocks.map(function(f) { return "<option>" + f.name + "</option>"; }).join("");
+    box.innerHTML = "<label>Species</label><select id='bd-f-hatch-species'><option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option></select><label>Breed</label><input id='bd-f-hatch-breed' placeholder='Breed (optional)'><label>Count</label><input id='bd-f-hatch-count' type='number' min='1' step='1' placeholder='e.g. 8'><label>Parent Tag (optional)</label><input id='bd-f-hatch-parent' placeholder='Mother tag'><label>Flock</label><select id='bd-f-hatch-flock'>" + flockOpts + "</select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'><p style='color:#888;font-size:13px;margin-top:8px;'>Creates placeholder birds. Tag each bird later.</p>";
+  } else if (t === "feed") {
+    var feeders = bd_birds.filter(function(b) { return b.type === "feeder"; });
+    var feederOpts = feeders.length ? feeders.map(function(f) { return "<option value='" + (f.uuid || f._localId) + "'>" + f.name + "</option>"; }).join("") : "<option value=''>No feeders - fetch from farmOS</option>";
+    box.innerHTML = "<label>Feeder</label><select id='bd-f-feeder'>" + feederOpts + "</select><label>Feed Type</label><input id='bd-f-feed-type' placeholder='e.g. Layer Pellets'><label>Amount</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-feed-amount' type='number' step='0.1' placeholder='0.0' style='flex:1;'><select id='bd-f-feed-unit' style='width:90px;margin:0;'><option>lbs</option><option>kg</option><option>cups</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
   }
 }
 
 function bd_saveLog() {
-  const t   = document.getElementById('bd-log-type').value;
-  const timeVal = document.getElementById('bd-log-time').value;
-  if (!timeVal) { bd_toast('⚠️ Set a time'); return; }
-  const ts = String(Math.floor(new Date(timeVal).getTime() / 1000));
-  const notes = document.getElementById('bd-f-notes')?.value || '';
-  const bird = bd_birds.find(b => (b.uuid || b._localId) === bd_currentBirdUUID);
-
-  let logData = { type: t, birdId: bd_currentBirdUUID, birdTag: bird?.tag || '', birdName: bird?.name || '', timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes, synced: false, id: Date.now() + Math.random().toString(36).slice(2) };
-
-  if (t === 'weight') {
-    const w = document.getElementById('bd-f-weight')?.value;
-    if (!w) { bd_toast('⚠️ Enter weight'); return; }
-    logData.weight = w;
-    logData.weightUnit = document.getElementById('bd-f-weight-unit')?.value || 'lbs';
-    logData.logName = `Weight - ${bird?.tag || 'Bird'} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-  } else if (t === 'med') {
-    const med = document.getElementById('bd-f-med')?.value.trim();
-    if (!med) { bd_toast('⚠️ Enter medication name'); return; }
-    logData.med = med;
-    logData.dose = document.getElementById('bd-f-dose')?.value || '';
-    logData.doseUnit = document.getElementById('bd-f-dose-unit')?.value || 'ml';
-    logData.route = document.getElementById('bd-f-route')?.value || '';
-    logData.logName = `Med - ${med} - ${bird?.tag || 'Bird'} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-  } else if (t === 'obs') {
-    logData.title = document.getElementById('bd-f-obs-title')?.value.trim() || 'Observation';
-    logData.logName = `Obs - ${logData.title} - ${bird?.tag || 'Bird'} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-  } else if (t === 'proc') {
-    logData.proc = document.getElementById('bd-f-proc')?.value.trim() || 'Procedure';
-    logData.logName = `Proc - ${logData.proc} - ${bird?.tag || 'Bird'} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-  } else if (t === 'mortality') {
-    logData.cause = document.getElementById('bd-f-cause')?.value || 'Unknown';
-    logData.logName = `Death - ${bird?.tag || 'Bird'} - ${new Date(timeVal).toISOString().slice(0,10)}`;
+  var t = document.getElementById("bd-log-type").value;
+  var timeVal = document.getElementById("bd-log-time").value;
+  if (!timeVal) { bd_toast("Set a time"); return; }
+  var ts = String(Math.floor(new Date(timeVal).getTime() / 1000));
+  var notes = document.getElementById("bd-f-notes") ? document.getElementById("bd-f-notes").value : "";
+  var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === bd_currentBirdId; })[0];
+  var logData = { id: Date.now() + "_" + Math.random().toString(36).slice(2), type: t, birdId: bd_currentBirdId, birdTag: bird ? (bird.tag || "") : "", birdName: bird ? (bird.name || "") : "", timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false };
+  var dateStr = new Date(timeVal).toISOString().slice(0,10);
+  var birdLabel = bird ? (bird.tag || bird.name || "Bird") : "Bird";
+  if (t === "weight") {
+    var w = document.getElementById("bd-f-weight") ? document.getElementById("bd-f-weight").value : "";
+    if (!w) { bd_toast("Enter weight"); return; }
+    logData.weight = w; logData.weightUnit = document.getElementById("bd-f-weight-unit") ? document.getElementById("bd-f-weight-unit").value : "lbs";
+    logData.logName = "Weight - " + birdLabel + " - " + dateStr;
+  } else if (t === "med") {
+    var med = document.getElementById("bd-f-med") ? document.getElementById("bd-f-med").value.trim() : "";
+    if (!med) { bd_toast("Enter medication name"); return; }
+    logData.med = med; logData.dose = document.getElementById("bd-f-dose") ? document.getElementById("bd-f-dose").value : ""; logData.doseUnit = document.getElementById("bd-f-dose-unit") ? document.getElementById("bd-f-dose-unit").value : "ml"; logData.route = document.getElementById("bd-f-route") ? document.getElementById("bd-f-route").value : "";
+    logData.logName = "Med - " + med + " - " + birdLabel + " - " + dateStr;
+  } else if (t === "obs") {
+    logData.title = document.getElementById("bd-f-obs-title") ? document.getElementById("bd-f-obs-title").value.trim() : "Observation";
+    logData.logName = "Obs - " + (logData.title || "Observation") + " - " + birdLabel + " - " + dateStr;
+  } else if (t === "proc") {
+    logData.proc = document.getElementById("bd-f-proc") ? document.getElementById("bd-f-proc").value.trim() : "Procedure";
+    logData.logName = "Proc - " + (logData.proc || "Procedure") + " - " + birdLabel + " - " + dateStr;
+  } else if (t === "mortality") {
+    logData.cause = document.getElementById("bd-f-cause") ? document.getElementById("bd-f-cause").value : "Unknown";
+    logData.logName = "Death - " + birdLabel + " - " + dateStr;
     logData.archiveBird = true;
-  } else if (t === 'hatch') {
-    const count = parseInt(document.getElementById('bd-f-hatch-count')?.value || '0');
-    if (!count || count < 1) { bd_toast('⚠️ Enter hatch count'); return; }
-    logData.hatchSpecies = document.getElementById('bd-f-hatch-species')?.value || 'Chicken';
-    logData.hatchBreed   = document.getElementById('bd-f-hatch-breed')?.value || '';
+    if (bird) { bird.status = "archived"; localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds)); }
+    bd_pending.push({ action: "archive_bird", birdUUID: bird ? bird.uuid : null, id: "arch_" + logData.id, synced: false });
+  } else if (t === "hatch") {
+    var count = parseInt(document.getElementById("bd-f-hatch-count") ? document.getElementById("bd-f-hatch-count").value : "0");
+    if (!count || count < 1) { bd_toast("Enter hatch count"); return; }
+    logData.hatchSpecies = document.getElementById("bd-f-hatch-species") ? document.getElementById("bd-f-hatch-species").value : "Chicken";
+    logData.hatchBreed   = document.getElementById("bd-f-hatch-breed")   ? document.getElementById("bd-f-hatch-breed").value   : "";
     logData.hatchCount   = count;
-    logData.hatchParent  = document.getElementById('bd-f-hatch-parent')?.value || '';
-    logData.hatchFlock   = document.getElementById('bd-f-hatch-flock')?.value || '';
-    logData.logName = `Hatch - ${logData.hatchSpecies} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-    // Create placeholder bird assets
-    for (let i = 1; i <= count; i++) {
-      const pad = String(i).padStart(3, '0');
-      const newBird = {
-        _localId: 'local_' + Date.now() + '_' + i,
-        uuid:     null,
-        tag:      '',
-        name:     `Untagged ${logData.hatchSpecies} ${pad}`,
-        species:  logData.hatchSpecies,
-        breed:    logData.hatchBreed,
-        sex:      '',
-        flock:    logData.hatchFlock,
-        status:   'active',
-        notes:    `Hatched ${new Date(timeVal).toISOString().slice(0,10)}`,
-        synced:   false,
-      };
-      bd_birds.push(newBird);
-      bd_pending.push({ action: 'create_bird', bird: newBird, id: newBird._localId });
+    logData.hatchParent  = document.getElementById("bd-f-hatch-parent")  ? document.getElementById("bd-f-hatch-parent").value  : "";
+    logData.hatchFlock   = document.getElementById("bd-f-hatch-flock")   ? document.getElementById("bd-f-hatch-flock").value   : "";
+    logData.logName = "Hatch - " + logData.hatchSpecies + " - " + dateStr;
+    for (var hi = 1; hi <= count; hi++) {
+      var nb = { _localId: "local_" + Date.now() + "_" + hi, uuid: null, tag: "", name: "Untagged " + logData.hatchSpecies + " " + String(hi).padStart(3,"0"), species: logData.hatchSpecies, breed: logData.hatchBreed, sex: "", flock: logData.hatchFlock, status: "active", notes: "Hatched " + dateStr, synced: false };
+      bd_birds.push(nb);
+      bd_pending.push({ action: "create_bird", bird: nb, id: nb._localId, synced: false });
     }
     localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
-  } else if (t === 'feed') {
-    const feederVal = document.getElementById('bd-f-feeder')?.value;
-    if (!feederVal) { bd_toast('⚠️ No feeder selected'); return; }
-    const feeder = bd_birds.find(b => (b.uuid || b._localId) === feederVal);
+  } else if (t === "feed") {
+    var feederVal = document.getElementById("bd-f-feeder") ? document.getElementById("bd-f-feeder").value : "";
+    if (!feederVal) { bd_toast("No feeder selected"); return; }
+    var feeder = bd_birds.filter(function(b) { return (b.uuid || b._localId) === feederVal; })[0];
     logData.feederId   = feederVal;
-    logData.feederName = feeder?.name || '';
-    logData.feedType   = document.getElementById('bd-f-feed-type')?.value || '';
-    logData.feedAmount = document.getElementById('bd-f-feed-amount')?.value || '';
-    logData.feedUnit   = document.getElementById('bd-f-feed-unit')?.value || 'lbs';
-    logData.logName = `Feed - ${logData.feederName} - ${new Date(timeVal).toISOString().slice(0,10)}`;
-    // Bridge: auto-decrement StockDesk if feed type matches a stock item
-    if (logData.feedType && logData.feedAmount) {
-      bd_stockDeductFeed(logData.feedType, parseFloat(logData.feedAmount), logData.feedUnit, logData.feederName, ts);
-    }
+    logData.feederName = feeder ? feeder.name : "";
+    logData.feedType   = document.getElementById("bd-f-feed-type")   ? document.getElementById("bd-f-feed-type").value   : "";
+    logData.feedAmount = document.getElementById("bd-f-feed-amount") ? document.getElementById("bd-f-feed-amount").value : "";
+    logData.feedUnit   = document.getElementById("bd-f-feed-unit")   ? document.getElementById("bd-f-feed-unit").value   : "lbs";
+    logData.logName    = "Feed - " + logData.feederName + " - " + dateStr;
+    bd_stockDeductFeed(logData.feedType, parseFloat(logData.feedAmount), logData.feedUnit, logData.feederName, ts);
   }
-
   bd_history.unshift(logData);
-  bd_pending.push({ action: 'log', log: logData, id: logData.id });
+  bd_pending.push({ action: "log", log: logData, id: logData.id, synced: false });
   localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
   localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
-
-  // Archive bird if mortality
-  if (t === 'mortality' && bird) {
-    bird.status = 'archived';
-    localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
-    bd_pending.push({ action: 'archive_bird', birdUUID: bird.uuid, id: 'arch_' + logData.id });
-    localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
-  }
-
   bd_updateSyncBadge();
-  document.getElementById('bd-log-modal').style.display = 'none';
-  bd_toast('✅ Log saved');
+  document.getElementById("bd-log-modal").style.display = "none";
+  bd_toast("Log saved");
   bd_renderBirds();
 }
 
-// ===== STOCK BRIDGE: feed auto-deduct =====
-// ===== SHARED MODULE: cross-module feed deduct bridge =====
 function bd_stockDeductFeed(feedName, amount, unit, feederName, ts) {
   try {
-    const SD_HIST_KEY = 'farmdesk_stock_history';
-    const SD_PEND_KEY = 'farmdesk_stock_pending';
-    const stockHistory = JSON.parse(localStorage.getItem(SD_HIST_KEY) || '[]');
-    const stockPending = JSON.parse(localStorage.getItem(SD_PEND_KEY) || '[]');
-    const stockAssets  = JSON.parse(localStorage.getItem('farmdesk_stock_assets') || '[]');
-    // Find matching stock asset by name fragment
-    const match = stockAssets.find(a => a.name && a.name.toLowerCase().includes(feedName.toLowerCase()));
-    if (!match) return; // no matching stock item — skip silently
-    const entry = {
-      id:        Date.now() + Math.random().toString(36).slice(2),
-      assetUUID: match.uuid || null,
-      assetName: match.name,
-      action:    'decrement',
-      qty:       amount,
-      unit:      unit,
-      note:      `Feed log: ${feederName}`,
-      timestamp: ts,
-      synced:    false,
-    };
-    stockHistory.unshift(entry);
-    stockPending.push(entry);
-    localStorage.setItem(SD_HIST_KEY, JSON.stringify(stockHistory));
-    localStorage.setItem(SD_PEND_KEY, JSON.stringify(stockPending));
-  } catch(e) { /* bridge failure is non-fatal */ }
+    var stockAssets = JSON.parse(localStorage.getItem("farmdesk_stock_assets") || "[]");
+    var match = null;
+    for (var i = 0; i < stockAssets.length; i++) { if (stockAssets[i].name && stockAssets[i].name.toLowerCase().indexOf(feedName.toLowerCase()) >= 0) { match = stockAssets[i]; break; } }
+    if (!match) return;
+    var entry = { id: Date.now() + "_" + Math.random().toString(36).slice(2), assetUUID: match.uuid || null, assetName: match.name, action: "decrement", qty: amount, unit: unit, note: "Feed log: " + feederName, timestamp: ts, synced: false };
+    var sh = JSON.parse(localStorage.getItem("farmdesk_stock_history") || "[]");
+    var sp = JSON.parse(localStorage.getItem("farmdesk_stock_pending") || "[]");
+    sh.unshift(entry); sp.push(entry);
+    localStorage.setItem("farmdesk_stock_history", JSON.stringify(sh));
+    localStorage.setItem("farmdesk_stock_pending", JSON.stringify(sp));
+  } catch(e) {}
 }
 
-// ===== ADD / EDIT BIRD =====
 function bd_openAddBird() {
-  bd_editBirdUUID = null;
-  document.getElementById('bd-bird-modal-title').textContent = 'Add Bird';
-  document.getElementById('bd-bird-tag').value = '';
-  document.getElementById('bd-bird-name').value = '';
-  document.getElementById('bd-bird-species').value = 'Chicken';
-  document.getElementById('bd-bird-species-custom').value = '';
-  document.getElementById('bd-bird-sex').value = '';
-  document.getElementById('bd-bird-notes').value = '';
+  bd_editBirdId = null;
+  document.getElementById("bd-bird-modal-title").textContent = "Add Bird";
+  ["bd-bird-tag","bd-bird-name","bd-bird-species-custom","bd-bird-breed-custom","bd-bird-notes"].forEach(function(id) { var el = document.getElementById(id); if (el) el.value = ""; });
+  document.getElementById("bd-bird-species").value = "Chicken";
+  document.getElementById("bd-bird-sex").value = "";
   bd_updateBreedList();
-  bd_populateFlockSelect('bd-bird-flock');
-  document.getElementById('bd-bird-modal').style.display = 'block';
+  bd_populateFlock("bd-bird-flock");
+  document.getElementById("bd-bird-modal").style.display = "block";
 }
 
 function bd_openEditBird(id) {
-  const bird = bd_birds.find(b => (b.uuid || b._localId) === id);
+  var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === id; })[0];
   if (!bird) return;
-  bd_editBirdUUID = id;
-  document.getElementById('bd-bird-modal-title').textContent = 'Edit Bird';
-  document.getElementById('bd-bird-tag').value  = bird.tag || '';
-  document.getElementById('bd-bird-name').value = bird.name || '';
-  const knownSpecies = ['Chicken','Duck','Goose','Other'];
-  if (knownSpecies.includes(bird.species)) {
-    document.getElementById('bd-bird-species').value = bird.species;
-    document.getElementById('bd-bird-species-custom').value = '';
-  } else {
-    document.getElementById('bd-bird-species').value = 'Other';
-    document.getElementById('bd-bird-species-custom').value = bird.species || '';
-  }
-  document.getElementById('bd-bird-sex').value   = bird.sex || '';
-  document.getElementById('bd-bird-notes').value = bird.notes || '';
+  bd_editBirdId = id;
+  document.getElementById("bd-bird-modal-title").textContent = "Edit Bird";
+  document.getElementById("bd-bird-tag").value  = bird.tag   || "";
+  document.getElementById("bd-bird-name").value = bird.name  || "";
+  var known = ["Chicken","Duck","Goose","Other"];
+  if (known.indexOf(bird.species) >= 0) { document.getElementById("bd-bird-species").value = bird.species; document.getElementById("bd-bird-species-custom").value = ""; }
+  else { document.getElementById("bd-bird-species").value = "Other"; document.getElementById("bd-bird-species-custom").value = bird.species || ""; }
+  document.getElementById("bd-bird-sex").value   = bird.sex   || "";
+  document.getElementById("bd-bird-notes").value = bird.notes || "";
+  document.getElementById("bd-bird-breed-custom").value = bird.breed || "";
   bd_updateBreedList();
-  document.getElementById('bd-bird-breed-custom').value = bird.breed || '';
-  bd_populateFlockSelect('bd-bird-flock', bird.flock);
-  document.getElementById('bd-bird-modal').style.display = 'block';
+  bd_populateFlock("bd-bird-flock", bird.flock);
+  document.getElementById("bd-bird-modal").style.display = "block";
 }
 
 function bd_closeBirdModal(e) {
-  if (!e || e.target === document.getElementById('bd-bird-modal')) {
-    document.getElementById('bd-bird-modal').style.display = 'none';
-  }
+  if (!e || e.target === document.getElementById("bd-bird-modal")) document.getElementById("bd-bird-modal").style.display = "none";
 }
 
 function bd_updateBreedList() {
-  const species = document.getElementById('bd-bird-species')?.value || 'Chicken';
-  const breeds  = bd_speciesCfg[species] || [];
-  const sel = document.getElementById('bd-bird-breed');
+  var sp = document.getElementById("bd-bird-species") ? document.getElementById("bd-bird-species").value : "Chicken";
+  var breeds = bd_speciesCfg[sp] || [];
+  var sel = document.getElementById("bd-bird-breed");
   if (!sel) return;
-  sel.innerHTML = ['<option value="">-- select or type below --</option>',
-    ...breeds.map(b => `<option>${b}</option>`)].join('');
+  sel.innerHTML = "<option value=''>-- select or type below --</option>" + breeds.map(function(b) { return "<option>" + b + "</option>"; }).join("");
 }
 
 function bd_saveBird() {
-  const tag  = document.getElementById('bd-bird-tag').value.trim();
-  const name = document.getElementById('bd-bird-name').value.trim();
-  const speciesSelect = document.getElementById('bd-bird-species').value;
-  const speciesCustom = document.getElementById('bd-bird-species-custom').value.trim();
-  const species = (speciesSelect === 'Other' && speciesCustom) ? speciesCustom : speciesSelect;
-  const breedSelect = document.getElementById('bd-bird-breed').value;
-  const breedCustom = document.getElementById('bd-bird-breed-custom').value.trim();
-  const breed  = breedCustom || breedSelect;
-  const sex    = document.getElementById('bd-bird-sex').value;
-  const flock  = document.getElementById('bd-bird-flock').value;
-  const notes  = document.getElementById('bd-bird-notes').value.trim();
-
-  if (!tag && !name) { bd_toast('⚠️ Enter a tag or name'); return; }
-
-  if (bd_editBirdUUID) {
-    // Edit existing
-    const bird = bd_birds.find(b => (b.uuid || b._localId) === bd_editBirdUUID);
-    if (bird) {
-      bird.tag = tag; bird.name = name; bird.species = species;
-      bird.breed = breed; bird.sex = sex; bird.flock = flock; bird.notes = notes;
-      bird.synced = false;
-      if (bird.uuid) bd_pending.push({ action: 'update_bird', birdUUID: bird.uuid, bird, id: 'upd_' + Date.now() });
-    }
+  var tag     = document.getElementById("bd-bird-tag").value.trim();
+  var name    = document.getElementById("bd-bird-name").value.trim();
+  var sp      = document.getElementById("bd-bird-species").value;
+  var spc     = document.getElementById("bd-bird-species-custom").value.trim();
+  var species = (sp === "Other" && spc) ? spc : sp;
+  var bc      = document.getElementById("bd-bird-breed-custom").value.trim();
+  var bs      = document.getElementById("bd-bird-breed").value;
+  var breed   = bc || bs;
+  var sex     = document.getElementById("bd-bird-sex").value;
+  var flock   = document.getElementById("bd-bird-flock").value;
+  var notes   = document.getElementById("bd-bird-notes").value.trim();
+  if (!tag && !name) { bd_toast("Enter a tag or name"); return; }
+  if (bd_editBirdId) {
+    var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === bd_editBirdId; })[0];
+    if (bird) { bird.tag = tag; bird.name = name; bird.species = species; bird.breed = breed; bird.sex = sex; bird.flock = flock; bird.notes = notes; bird.synced = false; if (bird.uuid) bd_pending.push({ action: "update_bird", birdUUID: bird.uuid, bird: bird, id: "upd_" + Date.now(), synced: false }); }
   } else {
-    // New bird
-    const newBird = {
-      _localId: 'local_' + Date.now(),
-      uuid:     null,
-      tag, name, species, breed, sex, flock, notes,
-      status:   'active',
-      synced:   false,
-    };
-    bd_birds.push(newBird);
-    bd_pending.push({ action: 'create_bird', bird: newBird, id: newBird._localId });
+    var nb = { _localId: "local_" + Date.now(), uuid: null, tag: tag, name: name, species: species, breed: breed, sex: sex, flock: flock, notes: notes, status: "active", synced: false };
+    bd_birds.push(nb); bd_pending.push({ action: "create_bird", bird: nb, id: nb._localId, synced: false });
   }
-
   localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
   localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
   bd_updateSyncBadge();
-  document.getElementById('bd-bird-modal').style.display = 'none';
-  bd_toast('✅ Bird saved');
+  document.getElementById("bd-bird-modal").style.display = "none";
+  bd_toast("Bird saved");
   bd_renderBirds();
 }
 
-// ===== EGGS SCREEN =====
 function bd_initEggs() {
-  bd_populateFlockSelectEl(document.getElementById('bd-egg-flock'));
+  bd_populateFlock("bd-egg-flock");
   bd_setEggNow();
   bd_renderNestBoxes();
   bd_renderEggTotals();
 }
 
-function bd_setEggNow() {
-  const now = new Date(); now.setSeconds(0,0);
-  document.getElementById('bd-egg-time').value = now.toISOString().slice(0,16);
-}
+function bd_setEggNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-egg-time").value = now.toISOString().slice(0,16); }
 
 function bd_renderNestBoxes() {
-  const flockName = document.getElementById('bd-egg-flock')?.value || '';
-  const flock = bd_flocks.find(f => f.name === flockName);
-  const boxes = flock?.nestBoxes || [];
-  const container = document.getElementById('bd-nest-boxes');
-  if (!boxes.length) {
-    container.innerHTML = '<div class="box" style="color:#888;text-align:center;">No nest boxes configured for this flock.<br>Add them in Sync → Flock Manager.</div>';
-    return;
-  }
-  container.innerHTML = boxes.map((box, i) => `
-    <div class="nest-card">
-      <div class="nest-name">🪺 ${box}</div>
-      <input type="number" id="bd-nest-${i}" min="0" step="1" value="0" placeholder="0">
-    </div>
-  `).join('');
+  var flockName = document.getElementById("bd-egg-flock") ? document.getElementById("bd-egg-flock").value : "";
+  var flock = bd_flocks.filter(function(f) { return f.name === flockName; })[0];
+  var boxes = flock ? (flock.nestBoxes || []) : [];
+  var container = document.getElementById("bd-nest-boxes");
+  if (!boxes.length) { container.innerHTML = "<div class='box' style='color:#888;text-align:center;'>No nest boxes configured. Add in Sync - Flock Manager.</div>"; return; }
+  container.innerHTML = boxes.map(function(box, i) {
+    return "<div class='nest-card'><div class='nest-name'>" + box + "</div><input type='number' id='bd-nest-" + i + "' min='0' step='1' value='0' placeholder='0'></div>";
+  }).join("");
 }
 
 function bd_renderEggTotals() {
-  const now = new Date();
-  const todayStr = now.toISOString().slice(0,10);
-  const weekAgo  = new Date(now - 7*24*60*60*1000).getTime();
-  const monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
-
-  let today=0, week=0, month=0;
-  bd_history.filter(l => l.type === 'egg').forEach(l => {
-    const d = new Date(l.timeISO);
-    const eggs = parseInt(l.eggCount || 0);
+  var now = new Date(); var todayStr = now.toISOString().slice(0,10); var weekAgo = new Date(now - 7*24*60*60*1000).getTime(); var monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  var today=0, week=0, month=0;
+  bd_history.filter(function(l) { return l.type === "egg"; }).forEach(function(l) {
+    var d = new Date(l.timeISO); var eggs = parseInt(l.eggCount || 0);
     if (l.timeISO.slice(0,10) === todayStr) today += eggs;
     if (d.getTime() >= weekAgo)  week  += eggs;
     if (d.getTime() >= monthAgo) month += eggs;
   });
-  const et = document.getElementById('bd-egg-today');
-  const ew = document.getElementById('bd-egg-week');
-  const em = document.getElementById('bd-egg-month');
-  if (et) et.textContent = today;
-  if (ew) ew.textContent = week;
-  if (em) em.textContent = month;
+  var et = document.getElementById("bd-egg-today"); if (et) et.textContent = today;
+  var ew = document.getElementById("bd-egg-week");  if (ew) ew.textContent = week;
+  var em = document.getElementById("bd-egg-month"); if (em) em.textContent = month;
 }
 
 function bd_saveEggs() {
-  const flockName = document.getElementById('bd-egg-flock')?.value || '';
-  const timeVal   = document.getElementById('bd-egg-time')?.value;
-  const notes     = document.getElementById('bd-egg-notes')?.value || '';
-  if (!timeVal) { bd_toast('⚠️ Set a time'); return; }
-  if (!flockName) { bd_toast('⚠️ Select a flock'); return; }
-
-  const flock = bd_flocks.find(f => f.name === flockName);
-  const boxes = flock?.nestBoxes || [];
-  if (!boxes.length) { bd_toast('⚠️ No nest boxes configured'); return; }
-
-  const ts = String(Math.floor(new Date(timeVal).getTime() / 1000));
-  let savedCount = 0;
-
-  boxes.forEach((box, i) => {
-    const input = document.getElementById('bd-nest-' + i);
-    const count = parseInt(input?.value || '0');
+  var flockName = document.getElementById("bd-egg-flock") ? document.getElementById("bd-egg-flock").value : "";
+  var timeVal   = document.getElementById("bd-egg-time")  ? document.getElementById("bd-egg-time").value  : "";
+  var notes     = document.getElementById("bd-egg-notes") ? document.getElementById("bd-egg-notes").value : "";
+  if (!timeVal)   { bd_toast("Set a time"); return; }
+  if (!flockName) { bd_toast("Select a flock"); return; }
+  var flock = bd_flocks.filter(function(f) { return f.name === flockName; })[0];
+  var boxes = flock ? (flock.nestBoxes || []) : [];
+  if (!boxes.length) { bd_toast("No nest boxes configured"); return; }
+  var ts = String(Math.floor(new Date(timeVal).getTime() / 1000)); var saved = 0;
+  boxes.forEach(function(box, i) {
+    var input = document.getElementById("bd-nest-" + i);
+    var count = parseInt(input ? (input.value || "0") : "0");
     if (count < 0) return;
-    const logData = {
-      id:        Date.now() + '_egg_' + i,
-      type:      'egg',
-      flock:     flockName,
-      nestBox:   box,
-      eggCount:  count,
-      timestamp: ts,
-      timeISO:   new Date(timeVal).toISOString(),
-      notes:     notes,
-      synced:    false,
-      logName:   `Eggs - ${flockName} - ${box} - ${new Date(timeVal).toISOString().slice(0,10)}`,
-    };
-    bd_history.unshift(logData);
-    bd_pending.push({ action: 'log', log: logData, id: logData.id });
-    if (input) input.value = '0';
-    savedCount++;
+    var logData = { id: Date.now() + "_egg_" + i, type: "egg", flock: flockName, nestBox: box, eggCount: count, timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false, logName: "Eggs - " + flockName + " - " + box + " - " + new Date(timeVal).toISOString().slice(0,10) };
+    bd_history.unshift(logData); bd_pending.push({ action: "log", log: logData, id: logData.id, synced: false });
+    if (input) input.value = "0"; saved++;
   });
-
   localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
   localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
-  bd_updateSyncBadge();
-  bd_renderEggTotals();
-  bd_toast(`✅ ${savedCount} nest box${savedCount !== 1 ? 'es' : ''} saved`);
+  bd_updateSyncBadge(); bd_renderEggTotals();
+  bd_toast("Saved " + saved + " nest box" + (saved !== 1 ? "es" : ""));
 }
 
-// ===== HISTORY SCREEN =====
 function bd_setHistFilter(f, btn) {
   bd_histFilter = f;
-  document.querySelectorAll('#bd-screen-history .chip').forEach(c => c.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  document.querySelectorAll("#bd-screen-history .chip").forEach(function(c) { c.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
   bd_renderHistory();
 }
 
 function bd_renderHistory() {
-  const list = document.getElementById('bd-history-list');
+  var list = document.getElementById("bd-history-list");
   if (!list) return;
-  let logs = [...bd_history];
-  if (bd_histFilter === 'egg')       logs = logs.filter(l => l.type === 'egg');
-  if (bd_histFilter === 'health')    logs = logs.filter(l => ['weight','med','obs','proc','hatch'].includes(l.type));
-  if (bd_histFilter === 'feed')      logs = logs.filter(l => l.type === 'feed');
-  if (bd_histFilter === 'mortality') logs = logs.filter(l => l.type === 'mortality');
-
-  if (!logs.length) {
-    list.innerHTML = '<div class="box" style="color:#888;text-align:center;">No logs yet.</div>';
-    return;
-  }
-  list.innerHTML = logs.slice(0,100).map(l => `
-    <div class="log">
-      <div class="log-top">
-        <span class="log-bird">${l.type === 'egg' ? '🥚 ' + l.flock : l.birdTag || l.birdName || '?'}</span>
-        <span class="log-type">${l.type}</span>
-        ${!l.synced ? '<span style="color:#c90;font-size:11px;">⏳</span>' : ''}
-      </div>
-      <div class="log-detail">${bd_logSummary(l)}</div>
-      <div class="log-time">${new Date(l.timeISO).toLocaleString()}</div>
-    </div>
-  `).join('');
+  var logs = bd_history.slice();
+  if (bd_histFilter === "egg")       logs = logs.filter(function(l) { return l.type === "egg"; });
+  if (bd_histFilter === "health")    logs = logs.filter(function(l) { return ["weight","med","obs","proc","hatch"].indexOf(l.type) >= 0; });
+  if (bd_histFilter === "feed")      logs = logs.filter(function(l) { return l.type === "feed"; });
+  if (bd_histFilter === "mortality") logs = logs.filter(function(l) { return l.type === "mortality"; });
+  if (!logs.length) { list.innerHTML = "<div class='box' style='color:#888;text-align:center;'>No logs yet.</div>"; return; }
+  list.innerHTML = logs.slice(0,100).map(function(l) {
+    return "<div class='log'><div class='log-top'><span class='log-bird'>" + (l.type === "egg" ? l.flock : (l.birdTag || l.birdName || "?")) + "</span><span class='log-type'>" + l.type + "</span>" + (!l.synced ? "<span style='color:#c90;font-size:11px;'>pending</span>" : "") + "</div><div class='log-detail'>" + bd_logSummary(l) + "</div><div class='log-time'>" + new Date(l.timeISO).toLocaleString() + "</div></div>";
+  }).join("");
 }
 
 function bd_logSummary(l) {
-  if (l.type === 'egg')       return `${l.nestBox}: ${l.eggCount} egg${l.eggCount !== 1 ? 's' : ''}`;
-  if (l.type === 'weight')    return `${l.weight} ${l.weightUnit}`;
-  if (l.type === 'med')       return `${l.med} ${l.dose}${l.doseUnit} ${l.route}`;
-  if (l.type === 'obs')       return l.title || l.notes || '';
-  if (l.type === 'proc')      return l.proc || '';
-  if (l.type === 'mortality') return `Cause: ${l.cause}`;
-  if (l.type === 'hatch')     return `${l.hatchCount} ${l.hatchSpecies} hatched`;
-  if (l.type === 'feed')      return `${l.feederName}: ${l.feedAmount} ${l.feedUnit} ${l.feedType}`;
-  return l.notes || '';
+  if (l.type === "egg")       return l.nestBox + ": " + l.eggCount + " egg" + (l.eggCount !== 1 ? "s" : "");
+  if (l.type === "weight")    return l.weight + " " + l.weightUnit;
+  if (l.type === "med")       return l.med + " " + (l.dose || "") + (l.doseUnit || "") + " " + (l.route || "");
+  if (l.type === "obs")       return l.title || l.notes || "";
+  if (l.type === "proc")      return l.proc || "";
+  if (l.type === "mortality") return "Cause: " + l.cause;
+  if (l.type === "hatch")     return l.hatchCount + " " + l.hatchSpecies + " hatched";
+  if (l.type === "feed")      return (l.feederName || "") + ": " + (l.feedAmount || "") + " " + (l.feedUnit || "") + " " + (l.feedType || "");
+  return l.notes || "";
 }
 
-// ===== FLOCK MANAGER =====
-function bd_openFlockManager() {
-  bd_renderFlockList();
-  document.getElementById('bd-flock-modal').style.display = 'block';
-}
-
-function bd_closeFlockModal(e) {
-  if (!e || e.target === document.getElementById('bd-flock-modal')) {
-    document.getElementById('bd-flock-modal').style.display = 'none';
-  }
-}
+function bd_openFlockManager() { bd_renderFlockList(); document.getElementById("bd-flock-modal").style.display = "block"; }
+function bd_closeFlockModal(e) { if (!e || e.target === document.getElementById("bd-flock-modal")) document.getElementById("bd-flock-modal").style.display = "none"; }
 
 function bd_renderFlockList() {
-  const list = document.getElementById('bd-flock-list');
-  if (!bd_flocks.length) {
-    list.innerHTML = '<div style="color:#888;font-size:14px;margin-bottom:10px;">No flocks yet. Add one below.</div>';
-    return;
-  }
-  list.innerHTML = bd_flocks.map((f, fi) => `
-    <div class="box" style="margin-bottom:8px;">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-        <strong style="flex:1;">${f.name}</strong>
-        <button class="sm danger" onclick="bd_deleteFlock(${fi})" style="margin:0;padding:8px 12px;">🗑️</button>
-      </div>
-      <div style="font-size:13px;color:#888;margin-bottom:8px;">Species: ${f.species || 'Mixed'}</div>
-      <strong style="font-size:14px;">Nest Boxes</strong>
-      <div id="bd-boxes-${fi}">
-        ${(f.nestBoxes||[]).map((b,bi) => `
-          <div style="display:flex;gap:6px;margin-top:4px;">
-            <input value="${b}" onchange="bd_updateBoxName(${fi},${bi},this.value)" style="flex:1;margin:0;padding:8px;font-size:15px;">
-            <button class="sm danger" onclick="bd_deleteBox(${fi},${bi})" style="margin:0;padding:8px 10px;">✕</button>
-          </div>
-        `).join('')}
-      </div>
-      <button class="sm secondary" onclick="bd_addBox(${fi})" style="margin-top:6px;">+ Add Box</button>
-    </div>
-  `).join('');
+  var list = document.getElementById("bd-flock-list");
+  if (!bd_flocks.length) { list.innerHTML = "<div style='color:#888;font-size:14px;margin-bottom:10px;'>No flocks yet.</div>"; return; }
+  list.innerHTML = bd_flocks.map(function(f, fi) {
+    return "<div class='box' style='margin-bottom:8px;'>" +
+      "<div style='display:flex;align-items:center;gap:8px;margin-bottom:6px;'><strong style='flex:1;'>" + f.name + "</strong><button class='sm danger' onclick='bd_deleteFlock(" + fi + ")' style='margin:0;padding:8px 12px;'>Delete</button></div>" +
+      "<div style='font-size:13px;color:#888;margin-bottom:8px;'>Species: " + (f.species || "Mixed") + "</div>" +
+      "<strong style='font-size:14px;'>Nest Boxes</strong>" +
+      (f.nestBoxes || []).map(function(b, bi) {
+        return "<div style='display:flex;gap:6px;margin-top:4px;'><input value='" + b + "' onchange='bd_updateBoxName(" + fi + "," + bi + ",this.value)' style='flex:1;margin:0;padding:8px;font-size:15px;'><button class='sm danger' onclick='bd_deleteBox(" + fi + "," + bi + ")' style='margin:0;padding:8px 10px;'>X</button></div>";
+      }).join("") +
+      "<button class='sm secondary' onclick='bd_addBox(" + fi + ")' style='margin-top:6px;'>+ Add Box</button></div>";
+  }).join("");
 }
 
 function bd_addFlock() {
-  const name    = document.getElementById('bd-new-flock-name').value.trim();
-  const species = document.getElementById('bd-new-flock-species').value.trim();
-  if (!name) { bd_toast('⚠️ Enter a flock name'); return; }
-  bd_flocks.push({ name, species, nestBoxes: [] });
+  var name = document.getElementById("bd-new-flock-name").value.trim();
+  var species = document.getElementById("bd-new-flock-species").value.trim();
+  if (!name) { bd_toast("Enter a flock name"); return; }
+  bd_flocks.push({ name: name, species: species, nestBoxes: [] });
   localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks));
-  document.getElementById('bd-new-flock-name').value = '';
-  document.getElementById('bd-new-flock-species').value = '';
-  bd_renderFlockList();
-  bd_toast('✅ Flock added');
+  document.getElementById("bd-new-flock-name").value = "";
+  document.getElementById("bd-new-flock-species").value = "";
+  bd_renderFlockList(); bd_toast("Flock added");
 }
 
-function bd_deleteFlock(i) {
-  bd_flocks.splice(i,1);
-  localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks));
-  bd_renderFlockList();
-}
+function bd_deleteFlock(i) { bd_flocks.splice(i,1); localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks)); bd_renderFlockList(); }
+function bd_addBox(fi) { if (!bd_flocks[fi].nestBoxes) bd_flocks[fi].nestBoxes = []; bd_flocks[fi].nestBoxes.push("Box " + (bd_flocks[fi].nestBoxes.length + 1)); localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks)); bd_renderFlockList(); }
+function bd_deleteBox(fi, bi) { bd_flocks[fi].nestBoxes.splice(bi,1); localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks)); bd_renderFlockList(); }
+function bd_updateBoxName(fi, bi, val) { bd_flocks[fi].nestBoxes[bi] = val; localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks)); }
 
-function bd_addBox(fi) {
-  bd_flocks[fi].nestBoxes = bd_flocks[fi].nestBoxes || [];
-  bd_flocks[fi].nestBoxes.push('Box ' + (bd_flocks[fi].nestBoxes.length + 1));
-  localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks));
-  bd_renderFlockList();
-}
-
-function bd_deleteBox(fi, bi) {
-  bd_flocks[fi].nestBoxes.splice(bi,1);
-  localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks));
-  bd_renderFlockList();
-}
-
-function bd_updateBoxName(fi, bi, val) {
-  bd_flocks[fi].nestBoxes[bi] = val;
-  localStorage.setItem(BD_LS.flocks, JSON.stringify(bd_flocks));
-}
-
-// ===== SPECIES MANAGER =====
-function bd_openSpeciesManager() {
-  bd_renderSpeciesList();
-  document.getElementById('bd-species-modal').style.display = 'block';
-}
-
-function bd_closeSpeciesModal(e) {
-  if (!e || e.target === document.getElementById('bd-species-modal')) {
-    document.getElementById('bd-species-modal').style.display = 'none';
-  }
-}
+function bd_openSpeciesManager() { bd_renderSpeciesList(); document.getElementById("bd-species-modal").style.display = "block"; }
+function bd_closeSpeciesModal(e) { if (!e || e.target === document.getElementById("bd-species-modal")) document.getElementById("bd-species-modal").style.display = "none"; }
 
 function bd_renderSpeciesList() {
-  const list = document.getElementById('bd-species-list');
-  list.innerHTML = Object.entries(bd_speciesCfg).map(([sp, breeds]) => `
-    <div class="box" style="margin-bottom:8px;">
-      <strong>${sp}</strong>
-      <div style="font-size:13px;color:#888;margin:4px 0 6px;">${breeds.length} breeds</div>
-      ${breeds.map((b,bi) => `
-        <div style="display:flex;gap:6px;margin-top:4px;">
-          <span style="flex:1;font-size:15px;padding:6px;">${b}</span>
-          <button class="sm danger" onclick="bd_deleteBreed('${sp}',${bi})" style="margin:0;padding:8px 10px;">✕</button>
-        </div>
-      `).join('')}
-      <div style="display:flex;gap:6px;margin-top:8px;">
-        <input id="bd-new-breed-${sp}" placeholder="Add breed…" style="flex:1;margin:0;padding:8px;font-size:15px;">
-        <button class="sm" onclick="bd_addBreed('${sp}')" style="margin:0;">+</button>
-      </div>
-    </div>
-  `).join('');
+  var list = document.getElementById("bd-species-list");
+  list.innerHTML = Object.keys(bd_speciesCfg).map(function(sp) {
+    var breeds = bd_speciesCfg[sp];
+    return "<div class='box' style='margin-bottom:8px;'><strong>" + sp + "</strong><div style='font-size:13px;color:#888;margin:4px 0 6px;'>" + breeds.length + " breeds</div>" +
+      breeds.map(function(b, bi) {
+        return "<div style='display:flex;gap:6px;margin-top:4px;'><span style='flex:1;font-size:15px;padding:6px;'>" + b + "</span><button class='sm danger' onclick=\"bd_deleteBreed('" + sp + "'," + bi + ")\" style='margin:0;padding:8px 10px;'>X</button></div>";
+      }).join("") +
+      "<div style='display:flex;gap:6px;margin-top:8px;'><input id='bd-new-breed-" + sp + "' placeholder='Add breed...' style='flex:1;margin:0;padding:8px;font-size:15px;'><button class='sm' onclick=\"bd_addBreed('" + sp + "')\" style='margin:0;'>+</button></div></div>";
+  }).join("");
 }
 
 function bd_addBreed(sp) {
-  const inp = document.getElementById('bd-new-breed-' + sp);
-  const val = inp?.value.trim();
+  var inp = document.getElementById("bd-new-breed-" + sp);
+  var val = inp ? inp.value.trim() : "";
   if (!val) return;
-  bd_speciesCfg[sp] = bd_speciesCfg[sp] || [];
+  if (!bd_speciesCfg[sp]) bd_speciesCfg[sp] = [];
   bd_speciesCfg[sp].push(val);
   localStorage.setItem(BD_LS.species, JSON.stringify(bd_speciesCfg));
-  bd_renderSpeciesList();
-  bd_toast('✅ Breed added');
+  bd_renderSpeciesList(); bd_toast("Breed added");
 }
 
-function bd_deleteBreed(sp, i) {
-  bd_speciesCfg[sp].splice(i,1);
-  localStorage.setItem(BD_LS.species, JSON.stringify(bd_speciesCfg));
-  bd_renderSpeciesList();
-}
+function bd_deleteBreed(sp, i) { bd_speciesCfg[sp].splice(i,1); localStorage.setItem(BD_LS.species, JSON.stringify(bd_speciesCfg)); bd_renderSpeciesList(); }
 
-// ===== HELPERS =====
-function bd_populateFlockSelect(elId, selected) {
-  const el = document.getElementById(elId);
+function bd_populateFlock(elId, selected) {
+  var el = document.getElementById(elId);
   if (!el) return;
-  bd_populateFlockSelectEl(el, selected);
+  el.innerHTML = "<option value=''>-- No Flock --</option>" + bd_flocks.map(function(f) {
+    return "<option" + (f.name === selected ? " selected" : "") + ">" + f.name + "</option>";
+  }).join("");
 }
 
-function bd_populateFlockSelectEl(el, selected) {
-  if (!el) return;
-  el.innerHTML = ['<option value="">-- No Flock --</option>',
-    ...bd_flocks.map(f => `<option${f.name === selected ? ' selected' : ''}>${f.name}</option>`)
-  ].join('');
-}
-
-// ===== PHOTO VIEWER =====
-let _bdViewerScale = 1;
-let _bdViewerLastDist = 0;
-function bd_openPhotoViewer(src) {
-  const v = document.getElementById('photoViewer');
-  const img = document.getElementById('photoViewerImg');
-  if (!v || !img || !src) return;
-  _bdViewerScale = 1;
-  img.style.transform = 'scale(1)';
-  img.src = src;
-  v.classList.add('open');
-  v.ontouchstart = e => {
-    if (e.touches.length === 2) {
-      _bdViewerLastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      e.preventDefault();
-    }
-  };
-  v.ontouchmove = e => {
-    if (e.touches.length === 2) {
-      const d = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      if (_bdViewerLastDist > 0) { _bdViewerScale *= d / _bdViewerLastDist; _bdViewerScale = Math.min(Math.max(_bdViewerScale,1),6); img.style.transform = `scale(${_bdViewerScale})`; }
-      _bdViewerLastDist = d; e.preventDefault();
-    }
-  };
-  v.ontouchend = e => { if (e.touches.length < 2) _bdViewerLastDist = 0; };
-}
-function bd_closePhotoViewer(e) {
-  if (e && e.target !== document.getElementById('photoViewer') && e.target !== document.getElementById('photoViewerClose')) return;
-  const v = document.getElementById('photoViewer');
-  if (v) v.classList.remove('open');
-}
-
-// ===== FARMOS SYNC =====
 async function bd_syncToFarmOS() {
-  const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
-  if (!cfg.url || !cfg.user) { bd_toast('⚠️ No connection saved'); return; }
-  const unsyncedPending = bd_pending.filter(p => !p.synced);
-  if (!unsyncedPending.length) { bd_toast('✅ Nothing to sync'); return; }
-  bd_setLoading(true, 'Syncing to farmOS…');
-  const logEl = document.getElementById('bd-sync-log');
-  let synced = 0, failed = 0;
+  var cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || "{}");
+  if (!cfg.url || !cfg.user) { bd_toast("No connection saved"); return; }
+  var unsynced = bd_pending.filter(function(p) { return !p.synced; });
+  if (!unsynced.length) { bd_toast("Nothing to sync"); return; }
+  bd_setLoading(true, "Syncing to farmOS...");
+  var logEl = document.getElementById("bd-sync-log");
+  if (logEl) logEl.textContent = "";
+  var synced = 0, failed = 0;
   try {
-    const token = await bd_getToken(cfg);
-    for (const item of unsyncedPending) {
+    var token = await bd_getToken(cfg);
+    for (var i = 0; i < unsynced.length; i++) {
+      var item = unsynced[i];
       try {
-        if (item.action === 'log') {
-          await bd_pushLog(item.log, token, cfg);
-        } else if (item.action === 'create_bird') {
-          await bd_pushCreateBird(item.bird, token, cfg);
-        } else if (item.action === 'update_bird') {
-          await bd_pushUpdateBird(item.bird, token, cfg);
-        } else if (item.action === 'archive_bird') {
-          await bd_pushArchiveBird(item.birdUUID, token, cfg);
-        }
-        item.synced = true;
-        synced++;
-        if (logEl) logEl.textContent += `✅ ${item.action}: ${item.log?.logName || item.bird?.name || item.birdUUID || item.id}\n`;
+        if      (item.action === "log")          await bd_pushLog(item.log, token);
+        else if (item.action === "create_bird")  await bd_pushCreateBird(item.bird, token);
+        else if (item.action === "update_bird")  await bd_pushUpdateBird(item.bird, token);
+        else if (item.action === "archive_bird") await bd_pushArchiveBird(item.birdUUID, token);
+        item.synced = true; synced++;
+        if (logEl) logEl.textContent += "OK: " + (item.log ? item.log.logName : item.action) + "\n";
       } catch(e) {
         failed++;
-        if (logEl) logEl.textContent += `❌ ${item.action}: ${e.message}\n`;
+        if (logEl) logEl.textContent += "FAIL: " + (item.log ? item.log.logName : item.action) + ": " + e.message + "\n";
       }
     }
     localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
-    // Mark history entries as synced
-    bd_history.forEach(l => { const p = bd_pending.find(p => p.id === l.id); if (p?.synced) l.synced = true; });
+    bd_history.forEach(function(l) { var p = bd_pending.filter(function(p) { return p.id === l.id; })[0]; if (p && p.synced) l.synced = true; });
     localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
-    const now = new Date().toLocaleString();
+    var now = new Date().toLocaleString();
     localStorage.setItem(BD_LS.lastSync, now);
-    document.getElementById('bd-last-sync').textContent = now;
-    document.getElementById('bd-syncStatus').textContent = 'Synced ' + now;
+    document.getElementById("bd-last-sync").textContent = now;
+    document.getElementById("bd-syncStatus").textContent = "Synced " + now;
     bd_updateSyncBadge();
-    bd_toast(`✅ ${synced} synced${failed ? ', ' + failed + ' failed' : ''}`);
+    bd_toast(synced + " synced" + (failed ? ", " + failed + " failed" : ""));
   } catch(e) {
-    bd_toast('❌ Sync failed: ' + e.message);
-    if (logEl) logEl.textContent += '❌ Auth: ' + e.message + '\n';
+    bd_toast("Sync failed: " + e.message);
+    if (logEl) logEl.textContent += "Auth error: " + e.message + "\n";
   }
   bd_setLoading(false);
 }
 
-async function bd_pushLog(log, token, cfg) {
-  const farmosType = bd_logTypeMap(log.type);
-  const notes = bd_buildNotes(log);
-  const bird = bd_birds.find(b => (b.uuid || b._localId) === log.birdId);
-  const birdUUID = bird?.uuid || null;
-
-  const payload = {
-    data: {
-      type: 'log--' + farmosType,
-      attributes: {
-        name:      log.logName || log.type,
-        status:    'done',
-        timestamp: parseInt(log.timestamp),
-        notes:     { value: notes, format: 'default' },
-      },
-      relationships: birdUUID ? {
-        asset: { data: [{ type: 'asset--animal', id: birdUUID }] }
-      } : (log.type === 'feed' && log.feederId) ? {
-        asset: { data: [{ type: 'asset--equipment', id: log.feederId }] }
-      } : {},
-    }
-  };
-
-  const res = await fetch(bd_apiUrl('/api/log/' + farmosType), {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type':  'application/vnd.api+json',
-      'Accept':        'application/vnd.api+json',
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error('HTTP ' + res.status + ': ' + err.slice(0,120));
-  }
-}
-
-function bd_logTypeMap(t) {
-  if (t === 'med')       return 'medical';
-  if (t === 'obs')       return 'observation';
-  if (t === 'weight')    return 'observation';
-  if (t === 'proc')      return 'medical';
-  if (t === 'mortality') return 'observation';
-  if (t === 'hatch')     return 'birth';
-  if (t === 'egg')       return 'harvest';
-  if (t === 'feed')      return 'input';
-  return 'activity';
-}
-
 function bd_buildNotes(log) {
-  const parts = [];
-  if (log.type === 'weight')    parts.push(`Weight: ${log.weight} ${log.weightUnit}`);
-  if (log.type === 'med')       parts.push(`Med: ${log.med}`, `Dose: ${log.dose} ${log.doseUnit}`, `Route: ${log.route}`);
-  if (log.type === 'obs')       parts.push(log.title || '', log.notes || '');
-  if (log.type === 'proc')      parts.push(`Procedure: ${log.proc}`);
-  if (log.type === 'mortality') parts.push(`Cause: ${log.cause}`);
-  if (log.type === 'hatch')     parts.push(`Species: ${log.hatchSpecies}`, `Breed: ${log.hatchBreed}`, `Count: ${log.hatchCount}`, log.hatchParent ? `Parent: ${log.hatchParent}` : '');
-  if (log.type === 'egg')       parts.push(`Nest: ${log.nestBox}`, `Count: ${log.eggCount}`);
-  if (log.type === 'feed')      parts.push(`Feeder: ${log.feederName}`, `Feed: ${log.feedType}`, `Amount: ${log.feedAmount} ${log.feedUnit}`);
+  var parts = [];
+  if (log.type === "weight")    parts.push("Weight: " + log.weight + " " + log.weightUnit);
+  if (log.type === "med")       { parts.push("Med: " + log.med); parts.push("Dose: " + (log.dose||"") + " " + (log.doseUnit||"")); parts.push("Route: " + (log.route||"")); }
+  if (log.type === "obs")       { if (log.title) parts.push(log.title); if (log.notes) parts.push(log.notes); }
+  if (log.type === "proc")      parts.push("Procedure: " + (log.proc||""));
+  if (log.type === "mortality") parts.push("Cause: " + (log.cause||""));
+  if (log.type === "hatch")     { parts.push("Species: " + log.hatchSpecies); parts.push("Count: " + log.hatchCount); if (log.hatchBreed) parts.push("Breed: " + log.hatchBreed); if (log.hatchParent) parts.push("Parent: " + log.hatchParent); }
+  if (log.type === "egg")       { parts.push("Nest: " + log.nestBox); parts.push("Count: " + log.eggCount); }
+  if (log.type === "feed")      { parts.push("Feeder: " + (log.feederName||"")); parts.push("Feed: " + (log.feedType||"")); parts.push("Amount: " + (log.feedAmount||"") + " " + (log.feedUnit||"")); }
   if (log.notes) parts.push(log.notes);
-  return parts.filter(Boolean).join('\n');
+  return parts.filter(function(p) { return p; }).join("\n");
 }
 
-async function bd_pushCreateBird(bird, token, cfg) {
-  const payload = {
-    data: {
-      type: 'asset--animal',
-      attributes: {
-        name:   bird.name || ('Bird ' + (bird.tag || '')),
-        status: 'active',
-        tag: bird.tag ? [{ id: bird.tag, type: 'ear_tag' }] : [],
-        notes: bird.notes ? { value: bird.notes, format: 'default' } : undefined,
-      }
-    }
-  };
-  const res = await fetch(bd_apiUrl('/api/asset/animal'), {
-    method: 'POST',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type':  'application/vnd.api+json',
-      'Accept':        'application/vnd.api+json',
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) { const err = await res.text(); throw new Error('HTTP ' + res.status + ': ' + err.slice(0,120)); }
-  const data = await res.json();
-  // Store returned UUID back to local bird
-  const localBird = bd_birds.find(b => b._localId === bird._localId);
-  if (localBird && data.data?.id) {
-    localBird.uuid   = data.data.id;
-    localBird.synced = true;
-    localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
-  }
+function bd_farmosLogType(t) {
+  if (t === "med")       return "medical";
+  if (t === "obs")       return "observation";
+  if (t === "weight")    return "observation";
+  if (t === "proc")      return "medical";
+  if (t === "mortality") return "observation";
+  if (t === "hatch")     return "birth";
+  if (t === "egg")       return "harvest";
+  if (t === "feed")      return "input";
+  return "activity";
 }
 
-async function bd_pushUpdateBird(bird, token, cfg) {
+async function bd_pushLog(log, token) {
+  var ftype = bd_farmosLogType(log.type);
+  var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === log.birdId; })[0];
+  var birdUUID = bird ? bird.uuid : null;
+  var payload = { data: { type: "log--" + ftype, attributes: { name: log.logName || log.type, status: "done", timestamp: parseInt(log.timestamp), notes: { value: bd_buildNotes(log), format: "default" } }, relationships: {} } };
+  if (birdUUID) payload.data.relationships.asset = { data: [{ type: "asset--animal", id: birdUUID }] };
+  var res = await fetch(bd_apiUrl("/api/log/" + ftype), { method: "POST", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
+  if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
+}
+
+async function bd_pushCreateBird(bird, token) {
+  var payload = { data: { type: "asset--animal", attributes: { name: bird.name || ("Bird " + (bird.tag||"")), status: "active", tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
+  var res = await fetch(bd_apiUrl("/api/asset/animal"), { method: "POST", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
+  if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
+  var data = await res.json();
+  var lb = bd_birds.filter(function(b) { return b._localId === bird._localId; })[0];
+  if (lb && data.data && data.data.id) { lb.uuid = data.data.id; lb.synced = true; localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds)); }
+}
+
+async function bd_pushUpdateBird(bird, token) {
   if (!bird.uuid) return;
-  const payload = {
-    data: {
-      type: 'asset--animal',
-      id:   bird.uuid,
-      attributes: {
-        name: bird.name || ('Bird ' + (bird.tag || '')),
-        tag:  bird.tag ? [{ id: bird.tag, type: 'ear_tag' }] : [],
-        notes: bird.notes ? { value: bird.notes, format: 'default' } : undefined,
-      }
-    }
-  };
-  const res = await fetch(bd_apiUrl('/api/asset/animal/' + bird.uuid), {
-    method: 'PATCH',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type':  'application/vnd.api+json',
-      'Accept':        'application/vnd.api+json',
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) { const err = await res.text(); throw new Error('HTTP ' + res.status + ': ' + err.slice(0,120)); }
+  var payload = { data: { type: "asset--animal", id: bird.uuid, attributes: { name: bird.name || ("Bird " + (bird.tag||"")), tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
+  var res = await fetch(bd_apiUrl("/api/asset/animal/" + bird.uuid), { method: "PATCH", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
+  if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
 }
 
-async function bd_pushArchiveBird(uuid, token, cfg) {
+async function bd_pushArchiveBird(uuid, token) {
   if (!uuid) return;
-  const payload = {
-    data: {
-      type: 'asset--animal',
-      id:   uuid,
-      attributes: { status: 'archived' }
-    }
-  };
-  const res = await fetch(bd_apiUrl('/api/asset/animal/' + uuid), {
-    method: 'PATCH',
-    headers: {
-      'Authorization': 'Bearer ' + token,
-      'Content-Type':  'application/vnd.api+json',
-      'Accept':        'application/vnd.api+json',
-    },
-    body: JSON.stringify(payload)
-  });
-  if (!res.ok) { const err = await res.text(); throw new Error('HTTP ' + res.status + ': ' + err.slice(0,120)); }
+  var payload = { data: { type: "asset--animal", id: uuid, attributes: { status: "archived" } } };
+  var res = await fetch(bd_apiUrl("/api/asset/animal/" + uuid), { method: "PATCH", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
+  if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
 }
 
 // ===== STARTUP =====
-(function bd_init() {
-  const ls = localStorage.getItem(BD_LS.lastSync);
-  document.getElementById('bd-syncStatus').textContent = ls ? 'Synced ' + ls : 'Offline';
+(function() {
+  var ls = localStorage.getItem(BD_LS.lastSync);
+  document.getElementById("bd-syncStatus").textContent = ls ? "Synced " + ls : "Offline";
   bd_updateSyncBadge();
+  bd_setSpeciesFilter("");
   bd_renderBirds();
-  // Set default species filter button active
-  document.getElementById('bd-fAll').classList.add('active');
 })();
 </script>
 </body>
