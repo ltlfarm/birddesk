@@ -684,7 +684,7 @@ async function bd_fetchAssets() {
     const token = await bd_getToken(cfg);
     // Fetch animal assets
     const res = await fetch(bd_apiUrl('/api/asset/animal?filter[status]=active&page[limit]=100'), {
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/vnd.api+json' }
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/vnd.api+json', 'Accept': 'application/vnd.api+json' }
     });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
@@ -702,7 +702,7 @@ async function bd_fetchAssets() {
     }));
     // Fetch equipment (feeders)
     const resEq = await fetch(bd_apiUrl('/api/asset/equipment?filter[status]=active&page[limit]=50'), {
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/vnd.api+json' }
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/vnd.api+json', 'Accept': 'application/vnd.api+json' }
     });
     let feeders = [];
     if (resEq.ok) {
