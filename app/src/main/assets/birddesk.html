@@ -324,7 +324,20 @@ function bd_show(id) {
   if (id === "eggs")    bd_initEggs();
   if (id === "history") bd_renderHistory();
   if (id === "sync")    bd_renderSync();
+  // Push state so Android back button doesn't exit the app
+  if (window.history && window.history.pushState) {
+    window.history.pushState({ tab: id }, "", "#" + id);
+  }
 }
+
+// Handle Android back button via popstate
+window.addEventListener("popstate", function(e) {
+  // Push another state so back never exits
+  if (window.history && window.history.pushState) {
+    window.history.pushState({ tab: "birds" }, "", "#birds");
+  }
+  bd_show("birds");
+});
 
 function bd_setLoading(on, msg) {
   var el = document.getElementById("bdLoading");
@@ -1049,6 +1062,10 @@ function bd_logout() {
   bd_updateSyncBadge();
   bd_setSpeciesFilter("");
   bd_renderBirds();
+  // Push initial history state so Android back button doesn't exit immediately
+  if (window.history && window.history.pushState) {
+    window.history.pushState({ tab: "birds" }, "", "#birds");
+  }
 })();
 </script>
 </body>
