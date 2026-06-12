@@ -722,10 +722,12 @@ async function bd_fetchAssets() {
     localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
     result.textContent = `✅ Fetched ${fetched.length} birds, ${feeders.length} feeders`;
     result.style.color = '#3a7';
+    bd_toast('✅ Fetched ' + fetched.length + ' birds');
     bd_renderBirds();
   } catch(e) {
     result.textContent = '❌ ' + e.message;
     result.style.color = '#c00';
+    bd_toast('❌ Fetch failed: ' + e.message);
   }
   bd_setLoading(false);
 }
