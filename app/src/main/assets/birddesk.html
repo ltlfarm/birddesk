@@ -679,7 +679,7 @@ async function bd_fetchAssets() {
   const cfg = JSON.parse(localStorage.getItem(BD_LS.cfg) || '{}');
   if (!cfg.url || !cfg.user) { bd_toast('⚠️ Save connection settings first'); return; }
   bd_setLoading(true, 'Fetching birds from farmOS…');
-  const result = document.getElementById('bd-fetch-result');
+  const result = document.getElementById('bd-fetch-result') || {textContent:'',style:{}};
   try {
     const token = await bd_getToken(cfg);
     // Fetch animal assets
