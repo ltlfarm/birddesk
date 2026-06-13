@@ -347,7 +347,7 @@ let bd_speciesCfg = JSON.parse(localStorage.getItem(BD_LS.species) || JSON.strin
   Other:   []
 }));
 
-let bd_excluded = JSON.parse(localStorage.getItem("farmdesk_bird_excluded") || "[]");
+let bd_excluded = JSON.parse(localStorage.getItem(BD_LS.excluded) || "[]");
 let bd_currentBirdId = null;
 let bd_editBirdId = null;
 let bd_histFilter = "all";
@@ -485,6 +485,8 @@ function bd_toast(msg) {
   t._t = setTimeout(function() { t.style.opacity = "0"; }, 2500);
 }
 
+function bd_localISO(d) { return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString(); }
+
 function bd_updateSyncBadge() {
   var count = bd_pending.filter(function(p) { return !p.synced; }).length;
   var el = document.getElementById("bd-nav-sync");
@@ -576,7 +578,7 @@ function bd_toggleExcludeIdx(i) {
   var idx = bd_excluded.indexOf(type);
   if (idx >= 0) bd_excluded.splice(idx, 1);
   else bd_excluded.push(type);
-  localStorage.setItem("farmdesk_bird_excluded", JSON.stringify(bd_excluded));
+  localStorage.setItem(BD_LS.excluded, JSON.stringify(bd_excluded));
   bd_renderExcludedTypes();
   bd_renderBirds();
 }
@@ -655,6 +657,10 @@ async function bd_fetchAssets() {
         return { uuid: a.id, name: a.attributes.name || "", type: "feeder", status: "active", synced: true };
       });
     }
+    // Preserve local flock assignments across fetches
+    var prevFlock = {};
+    bd_birds.forEach(function(b) { if (b.uuid && b.flock) prevFlock[b.uuid] = b.flock; });
+    fetched.forEach(function(b) { if (prevFlock[b.uuid]) b.flock = prevFlock[b.uuid]; });
     var fetchedUUIDs = {};
     fetched.forEach(function(b) { if (b.uuid) fetchedUUIDs[b.uuid] = true; });
     // Only keep local birds that were added locally (no uuid) and aren't archived
@@ -722,13 +728,13 @@ function bd_openLogSheet(id) {
   var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === id; })[0];
   document.getElementById("bd-log-modal-title").textContent = "Log - " + (bird ? (bird.tag || bird.name || "Bird") : "Bird");
   var now = new Date(); now.setSeconds(0,0);
-  document.getElementById("bd-log-time").value = now.toISOString().slice(0,16);
+  document.getElementById("bd-log-time").value = bd_localISO(now).slice(0,16);
   bd_currentPhoto = null;
   bd_renderLogFields();
   document.getElementById("bd-log-modal").style.display = "block";
 }
 
-function bd_setLogNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-log-time").value = now.toISOString().slice(0,16); }
+function bd_setLogNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-log-time").value = bd_localISO(now).slice(0,16); }
 
 function bd_closeLogModal(e) {
   if (!e || e.target === document.getElementById("bd-log-modal")) document.getElementById("bd-log-modal").style.display = "none";
@@ -748,7 +754,7 @@ function bd_renderLogFields() {
   } else if (t === "mortality") {
     box.innerHTML = "<label>Cause</label><select id='bd-f-cause'><option>Unknown</option><option>Predator</option><option>Disease</option><option>Injury</option><option>Natural</option><option>Culled</option><option>Other</option></select><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea><p style='color:#c90;font-size:13px;margin-top:8px;'>This will archive the bird in farmOS on sync.</p>";
   } else if (t === "hatch") {
-    var flockOpts = bd_flocks.map(function(f) { return "<option>" + f.name + "</option>"; }).join("");
+    var flockOpts = "<option value=''>-- No Flock --</option>" + bd_flocks.map(function(f) { return "<option>" + f.name + "</option>"; }).join("");
     box.innerHTML = "<label>Species</label><select id='bd-f-hatch-species'><option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option></select><label>Breed</label><input id='bd-f-hatch-breed' placeholder='Breed (optional)'><label>Count</label><input id='bd-f-hatch-count' type='number' min='1' step='1' placeholder='e.g. 8'><label>Parent Tag (optional)</label><input id='bd-f-hatch-parent' placeholder='Mother tag'><label>Flock</label><select id='bd-f-hatch-flock'>" + flockOpts + "</select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'><p style='color:#888;font-size:13px;margin-top:8px;'>Creates placeholder birds. Tag each bird later.</p>";
   } else if (t === "feed") {
     var feeders = bd_birds.filter(function(b) { return b.type === "feeder"; });
@@ -765,7 +771,7 @@ function bd_saveLog() {
   var notes = document.getElementById("bd-f-notes") ? document.getElementById("bd-f-notes").value : "";
   var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === bd_currentBirdId; })[0];
   var logData = { id: Date.now() + "_" + Math.random().toString(36).slice(2), type: t, birdId: bd_currentBirdId, birdTag: bird ? (bird.tag || "") : "", birdName: bird ? (bird.name || "") : "", timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false };
-  var dateStr = new Date(timeVal).toISOString().slice(0,10);
+  var dateStr = bd_localISO(new Date(timeVal)).slice(0,10);
   var birdLabel = bird ? (bird.tag || bird.name || "Bird") : "Bird";
   if (t === "weight") {
     var w = document.getElementById("bd-f-weight") ? document.getElementById("bd-f-weight").value : "";
@@ -827,6 +833,8 @@ function bd_saveLog() {
   bd_renderBirds();
 }
 
+// ===== SHARED MODULE: StockDesk feed deduction =====
+// Writes StockDesk keys directly; no-ops if no matching stock asset. Same keys in unified FarmDesk.
 function bd_stockDeductFeed(feedName, amount, unit, feederName, ts) {
   try {
     var stockAssets = JSON.parse(localStorage.getItem("farmdesk_stock_assets") || "[]");
@@ -918,7 +926,7 @@ function bd_initEggs() {
   bd_renderEggTotals();
 }
 
-function bd_setEggNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-egg-time").value = now.toISOString().slice(0,16); }
+function bd_setEggNow() { var now = new Date(); now.setSeconds(0,0); document.getElementById("bd-egg-time").value = bd_localISO(now).slice(0,16); }
 
 function bd_renderNestBoxes() {
   var flockName = document.getElementById("bd-egg-flock") ? document.getElementById("bd-egg-flock").value : "";
@@ -932,11 +940,11 @@ function bd_renderNestBoxes() {
 }
 
 function bd_renderEggTotals() {
-  var now = new Date(); var todayStr = now.toISOString().slice(0,10); var weekAgo = new Date(now - 7*24*60*60*1000).getTime(); var monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+  var now = new Date(); var todayStr = bd_localISO(now).slice(0,10); var weekAgo = new Date(now - 7*24*60*60*1000).getTime(); var monthAgo = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
   var today=0, week=0, month=0;
   bd_history.filter(function(l) { return l.type === "egg"; }).forEach(function(l) {
     var d = new Date(l.timeISO); var eggs = parseInt(l.eggCount || 0);
-    if (l.timeISO.slice(0,10) === todayStr) today += eggs;
+    if (bd_localISO(d).slice(0,10) === todayStr) today += eggs;
     if (d.getTime() >= weekAgo)  week  += eggs;
     if (d.getTime() >= monthAgo) month += eggs;
   });
@@ -959,7 +967,7 @@ function bd_saveEggs() {
     var input = document.getElementById("bd-nest-" + i);
     var count = parseInt(input ? (input.value || "0") : "0");
     if (!count || count <= 0) return;
-    var logData = { id: Date.now() + "_egg_" + i + "_" + Math.random().toString(36).slice(2,6), type: "egg", flock: flockName, nestBox: box, eggCount: count, timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false, logName: "Eggs - " + flockName + " - " + box + " - " + new Date(timeVal).toISOString().slice(0,10) };
+    var logData = { id: Date.now() + "_egg_" + i + "_" + Math.random().toString(36).slice(2,6), type: "egg", flock: flockName, nestBox: box, eggCount: count, timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false, logName: "Eggs - " + flockName + " - " + box + " - " + bd_localISO(new Date(timeVal)).slice(0,10) };
     bd_history.unshift(logData); bd_pending.push({ action: "log", log: logData, id: logData.id, synced: false });
     if (input) input.value = "0"; saved++;
   });
@@ -1115,7 +1123,7 @@ function bd_editLog(id) {
   var birdLabel = l.type === "egg" ? l.flock : (l.birdTag || l.birdName || "?");
   document.getElementById("bd-edit-title").textContent = "Edit - " + birdLabel + " - " + l.type;
   var rawTime = l.timeISO ? new Date(l.timeISO) : new Date();
-  var localTime = rawTime.toISOString().slice(0,16);
+  var localTime = bd_localISO(rawTime).slice(0,16);
   var html = "<label>Time</label><input type='datetime-local' id='bd-ed-time' value='" + localTime + "'>";
   html += "<label>Notes</label><textarea id='bd-ed-notes' rows='3'>" + (l.notes || "") + "</textarea>";
   if (l.type === "weight") html = "<label>Time</label><input type='datetime-local' id='bd-ed-time' value='" + localTime + "'><label>Weight</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-ed-weight' type='number' step='0.01' value='" + (l.weight||"") + "' style='flex:1;'><select id='bd-ed-wunit' style='width:90px;margin:0;'><option" + (l.weightUnit==="lbs"?" selected":"") + ">lbs</option><option" + (l.weightUnit==="g"?" selected":"") + ">g</option><option" + (l.weightUnit==="kg"?" selected":"") + ">kg</option></select></div><label>Notes</label><textarea id='bd-ed-notes' rows='2'>" + (l.notes||"") + "</textarea>";
@@ -1134,13 +1142,13 @@ function bd_saveEdit() {
   if (l.type === "weight") {
     var wEl = document.getElementById("bd-ed-weight"); if (wEl) l.weight = wEl.value;
     var wuEl = document.getElementById("bd-ed-wunit"); if (wuEl) l.weightUnit = wuEl.value;
-    l.logName = "Weight - " + (l.birdTag||l.birdName||"Bird") + " - " + l.timeISO.slice(0,10);
+    l.logName = "Weight - " + (l.birdTag||l.birdName||"Bird") + " - " + bd_localISO(new Date(l.timeISO)).slice(0,10);
   }
   if (l.type === "med") {
     var mEl = document.getElementById("bd-ed-med"); if (mEl) l.med = mEl.value;
     var dEl = document.getElementById("bd-ed-dose"); if (dEl) l.dose = dEl.value;
     var duEl = document.getElementById("bd-ed-dunit"); if (duEl) l.doseUnit = duEl.value;
-    l.logName = "Med - " + (l.med||"") + " - " + (l.birdTag||l.birdName||"Bird") + " - " + l.timeISO.slice(0,10);
+    l.logName = "Med - " + (l.med||"") + " - " + (l.birdTag||l.birdName||"Bird") + " - " + bd_localISO(new Date(l.timeISO)).slice(0,10);
   }
   l.synced = false;
   // Update pending
