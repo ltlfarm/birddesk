@@ -332,11 +332,18 @@ function bd_show(id) {
 
 // Handle Android back button via popstate
 window.addEventListener("popstate", function(e) {
-  // Push another state so back never exits
+  // Close any open modal first
+  var modals = ["bd-log-modal","bd-bird-modal","bd-flock-modal","bd-species-modal"];
+  var closed = false;
+  modals.forEach(function(id) {
+    var m = document.getElementById(id);
+    if (m && m.style.display === "block") { m.style.display = "none"; closed = true; }
+  });
+  // Push state back so next back press also works
   if (window.history && window.history.pushState) {
     window.history.pushState({ tab: "birds" }, "", "#birds");
   }
-  bd_show("birds");
+  if (!closed) bd_show("birds");
 });
 
 function bd_setLoading(on, msg) {
@@ -425,24 +432,29 @@ function bd_renderSync() {
   bd_renderExcludedTypes();
 }
 
+var bd_typeListGlobal = [];
+
 function bd_renderExcludedTypes() {
   var el = document.getElementById("bd-excluded-types-list");
   if (!el) return;
-  // Gather all unique species from fetched birds
   var types = {};
   bd_birds.forEach(function(b) { if (b.species && b.type !== "feeder") types[b.species] = true; });
-  var typeList = Object.keys(types).sort();
-  if (!typeList.length) { el.innerHTML = "<div style='color:#888;font-size:13px;'>No animal types fetched yet.</div>"; return; }
-  el.innerHTML = typeList.map(function(t) {
+  bd_typeListGlobal = Object.keys(types).sort();
+  if (!bd_typeListGlobal.length) { el.innerHTML = "<div style='color:#888;font-size:13px;'>No animal types fetched yet.</div>"; return; }
+  el.innerHTML = bd_typeListGlobal.map(function(t, i) {
     var excluded = bd_excluded.indexOf(t) >= 0;
+    var bg = excluded ? "#8b0000" : "#1b4d1e";
+    var label = excluded ? "Excluded" : "Included";
     return "<div style='display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid #333;'>" +
       "<div style='flex:1;font-size:16px;'>" + t + "</div>" +
-      "<button onclick=\"bd_toggleExclude(this)\" data-type=\"" + t.replace(/"/g,'') + "\" style=\"margin:0;padding:8px 16px;font-size:14px;background:" + (excluded ? "#8b0000" : "#1b4d1e") + ";\">" + (excluded ? "Excluded" : "Included") + "</button>" +
+      "<button onclick='bd_toggleExcludeIdx(" + i + ")' style='margin:0;padding:8px 16px;font-size:14px;background:" + bg + ";'>" + label + "</button>" +
       "</div>";
   }).join("");
 }
 
-function bd_toggleExclude(type) {
+function bd_toggleExcludeIdx(i) {
+  var type = bd_typeListGlobal[i];
+  if (!type) return;
   var idx = bd_excluded.indexOf(type);
   if (idx >= 0) bd_excluded.splice(idx, 1);
   else bd_excluded.push(type);
@@ -567,7 +579,7 @@ function bd_renderBirds() {
         var meta = [b.breed, b.sex === "F" ? "Female" : b.sex === "M" ? "Male" : "", b.flock ? b.flock : ""].filter(function(x) { return x; }).join(" - ");
         return "<div class='bird-card' onclick=\"bd_openLogSheet('" + id + "')\">" +
           "<div class='bird-icon'>" + bd_speciesIcon(b.species) + "</div>" +
-          "<div class='bird-info'><div class='bird-tag'>" + (b.tag || "(no tag)") + "</div><div class='bird-name'>" + (b.name || "") + "</div><div class='bird-meta'>" + meta + "</div></div>" +
+          "<div class='bird-info'><div class='bird-tag'>" + (b.tag || "") + "</div><div class='bird-name'>" + (b.name || "") + "</div><div class='bird-meta'>" + meta + "</div></div>" +
           "<button onclick=\"event.stopPropagation();bd_openEditBird('" + id + "')\" style='margin:0;padding:10px 14px;font-size:16px;background:#333;'>Edit</button>" +
           "</div>";
       }).join("");
