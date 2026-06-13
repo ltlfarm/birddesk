@@ -454,10 +454,14 @@ window.addEventListener("popstate", function(e) {
   // Close photo viewer
   var pv = document.getElementById("bd-photo-viewer");
   if (pv && pv.style.display === "flex") { pv.style.display = "none"; closed = true; }
-  if (window.history && window.history.pushState) {
-    window.history.pushState({ tab: "birds" }, "", "#birds");
+  // MERGE NOTE: single popstate handler per app; unified FarmDesk owns this in merge
+  if (closed) {
+    var cur = document.querySelector(".screen.active");
+    var tab = cur ? cur.id.replace("bd-screen-", "") : "birds";
+    window.history.pushState({ tab: tab }, "", "#" + tab);
+  } else {
+    bd_show("birds");
   }
-  if (!closed) bd_show("birds");
 });
 
 function bd_setLoading(on, msg) {
@@ -954,8 +958,8 @@ function bd_saveEggs() {
   boxes.forEach(function(box, i) {
     var input = document.getElementById("bd-nest-" + i);
     var count = parseInt(input ? (input.value || "0") : "0");
-    if (count < 0) return;
-    var logData = { id: Date.now() + "_egg_" + i, type: "egg", flock: flockName, nestBox: box, eggCount: count, timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false, logName: "Eggs - " + flockName + " - " + box + " - " + new Date(timeVal).toISOString().slice(0,10) };
+    if (!count || count <= 0) return;
+    var logData = { id: Date.now() + "_egg_" + i + "_" + Math.random().toString(36).slice(2,6), type: "egg", flock: flockName, nestBox: box, eggCount: count, timestamp: ts, timeISO: new Date(timeVal).toISOString(), notes: notes, synced: false, logName: "Eggs - " + flockName + " - " + box + " - " + new Date(timeVal).toISOString().slice(0,10) };
     bd_history.unshift(logData); bd_pending.push({ action: "log", log: logData, id: logData.id, synced: false });
     if (input) input.value = "0"; saved++;
   });
@@ -1341,7 +1345,7 @@ async function bd_pushLog(log, token) {
 }
 
 async function bd_pushCreateBird(bird, token) {
-  var payload = { data: { type: "asset--animal", attributes: { name: bird.name || ("Bird " + (bird.tag||"")), status: "active", tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
+  var payload = { data: { type: "asset--animal", attributes: { name: bird.name || ("Bird " + (bird.tag||"")), status: "active", id_tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
   var res = await fetch(bd_apiUrl("/api/asset/animal"), { method: "POST", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
   if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
   var data = await res.json();
@@ -1351,7 +1355,7 @@ async function bd_pushCreateBird(bird, token) {
 
 async function bd_pushUpdateBird(bird, token) {
   if (!bird.uuid) return;
-  var payload = { data: { type: "asset--animal", id: bird.uuid, attributes: { name: bird.name || ("Bird " + (bird.tag||"")), tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
+  var payload = { data: { type: "asset--animal", id: bird.uuid, attributes: { name: bird.name || ("Bird " + (bird.tag||"")), id_tag: bird.tag ? [{ id: bird.tag, type: "ear_tag" }] : [] } } };
   var res = await fetch(bd_apiUrl("/api/asset/animal/" + bird.uuid), { method: "PATCH", headers: bd_postHeaders(token), body: JSON.stringify(payload) });
   if (!res.ok) { var err = await res.text(); throw new Error("HTTP " + res.status + ": " + err.slice(0,120)); }
 }
@@ -1366,14 +1370,8 @@ async function bd_pushArchiveBird(uuid, token) {
 // ===== LOGOUT =====
 function bd_logout() {
   if (!confirm("Clear all local data and log out?")) return;
-  var keys = Object.values(BD_LS);
-  keys.forEach(function(k) { localStorage.removeItem(k); });
-  // Also clear StockDesk data
-  ["farmdesk_stock_assets","farmdesk_stock_history","farmdesk_stock_pending",
-   "farmdesk_logs","farmdesk_goats","farmdesk_excludedAnimals","farmdesk_weights",
-   "SD_LS","stockdesk_assets","stockdesk_history","stockdesk_pending"].forEach(function(k) {
-    localStorage.removeItem(k);
-  });
+  // MERGE NOTE: clears only BirdDesk keys (farmdesk_cfg is shared; unified app owns it)
+  Object.values(BD_LS).forEach(function(k) { localStorage.removeItem(k); });
   bd_birds = []; bd_history = []; bd_pending = []; bd_flocks = [];
   window._bd_useProxy = false;
   document.getElementById("bd-syncStatus").textContent = "Offline";
