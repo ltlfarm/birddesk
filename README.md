@@ -1,41 +1,63 @@
-# Goat Desk
+# BirdDesk
 
-Farm animal logging app for goat management. Logs weight, vitals, medications, hoof condition, observations, births, and activities. Syncs to farmOS.
+**Poultry management for farmOS — Android app, offline-first**
 
-## Install the App
+BirdDesk is a single-file Android app for managing flocks, logging egg collection, feed, health events, and mortality — synced to a [farmOS](https://farmos.org) instance. Built for daily use in the coop, on older Android hardware, with no internet required to log.
 
-1. Go to the [Releases page](../../releases)
-2. Download the latest `app-release.apk`
-3. On your Android phone: Settings → Security → Allow unknown sources (or "Install unknown apps" for Chrome)
-4. Open the downloaded APK and install it
-5. Open Goat Desk, go to **FarmOS Sync**, enter your farmOS URL and credentials
+Part of the [FarmDesk suite](https://github.com/ltlfarm).
 
-## First Time Setup (GitHub Actions — one time only)
+---
 
-You only need to do this once to enable automatic APK builds.
+## Features
 
-### 1. Add repository secrets
+- Bird roster grouped by species (Chicken, Duck, Goose, Other) with tag, name, breed, sex, and flock
+- Flock manager with configurable nest boxes per flock
+- Egg collection screen — log counts per nest box, with today/week/month totals on the dashboard
+- Health logging: weight, medication, observation, procedure, hatch
+- Feed logging per flock
+- Mortality logging
+- Full history with filter chips (All / Eggs / Health / Feed / Death)
+- Syncs to farmOS JSON:API — birds as animal assets, logs as farmOS activity logs
+- Offline-first: all entries queue locally, pushed only when you tap Sync
+- No hardcoded farm data — works with any farmOS instance
 
-Go to your repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**
+---
 
-Add these four secrets:
+## Requirements
 
-| Secret name | Value |
-|---|---|
-| `KEYSTORE_BASE64` | *(see keystore file provided separately)* |
-| `KEYSTORE_PASSWORD` | `goatdesk2024` |
-| `KEY_ALIAS` | `goatdesk` |
-| `KEY_PASSWORD` | `goatdesk2024` |
+- farmOS 2.x with JSON:API enabled
+- OAuth2 credentials with `farm_manager` scope
+- Android 6+ (tested on Samsung Galaxy devices)
 
-### 2. Trigger a build
+---
 
-After adding secrets, go to **Actions** → **Build Goat Desk APK** → **Run workflow**.
+## Installation
 
-The APK will appear in Releases within about 5 minutes.
+Download the latest APK from [Releases](https://github.com/ltlfarm/birddesk/releases) and sideload it onto your device.
 
-## Updating the App
+---
 
-1. Replace `app/src/main/assets/goatdesk.html` with your new version
-2. Commit and push to `main`
-3. GitHub automatically builds a new APK
-4. Download from Releases and install over the old version
+## Setup
+
+1. Open the app and tap **Sync → Settings**
+2. Enter your farmOS URL, username, and password
+3. Tap **Fetch Birds** to import your existing flock from farmOS
+4. Configure flocks and nest boxes in **Sync → Flock Manager**
+5. Start logging
+
+---
+
+## farmOS Integration Notes
+
+- Birds sync as `asset--animal` with species stored in the `animal_type` term
+- All logs use Unix integer timestamps as required by farmOS
+- `farm_manager` OAuth scope required — `farm_worker` scope returns no logs for non-owners
+- Repeated failed login attempts will trigger a `flood_user_blocked` lockout on farmOS; wait 15–30 minutes without attempts to clear it
+
+---
+
+## Repository
+
+`github.com/ltlfarm/birddesk`
+
+APK builds automatically via GitHub Actions on every push to `main`.
