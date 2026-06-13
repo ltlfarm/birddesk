@@ -66,6 +66,9 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
 .egg-total-box { flex:1; background:#1b3a2a; border:1px solid #3a7; border-radius:8px; padding:10px; text-align:center; }
 .egg-total-box .etl { font-size:12px; color:#888; }
 .egg-total-box .etv { font-size:24px; font-weight:bold; color:#3a7; }
+.log-drawer { display:none; margin-top:8px; }
+.log-arrow { margin-left:auto; color:#555; font-size:14px; }
+.log-select { width:auto !important; margin:0 8px 0 0 !important; }
 </style>
 </head>
 <body>
@@ -129,6 +132,13 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
       <button class="chip" onclick="bd_setHistFilter('feed',this)">Feed</button>
       <button class="chip" onclick="bd_setHistFilter('mortality',this)">Death</button>
     </div>
+  </div>
+  <div class="box" style="display:flex;gap:8px;align-items:center;">
+    <label style="margin:0;display:flex;align-items:center;gap:6px;flex:1;">
+      <input type="checkbox" id="bd-select-all-logs" onchange="bd_toggleSelectAll(this.checked)" style="width:auto;margin:0;">
+      Select All
+    </label>
+    <button onclick="bd_deleteSelected()" style="margin:0;background:#8b0000;padding:10px 16px;font-size:15px;">Delete Selected</button>
   </div>
   <div id="bd-history-list"></div>
 </div>
@@ -273,6 +283,36 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
   </div>
 </div>
 
+<!-- PHOTO VIEWER -->
+<div id="bd-photo-viewer" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:600;align-items:center;justify-content:center;" onclick="bd_closePhotoViewer()">
+  <span style="position:absolute;top:16px;right:16px;font-size:28px;color:#fff;cursor:pointer;" onclick="bd_closePhotoViewer()">&#x2715;</span>
+  <img id="bd-photo-viewer-img" src="" style="max-width:100%;max-height:100vh;object-fit:contain;">
+</div>
+
+<!-- CONFIRM MODAL -->
+<div id="bd-confirm-modal" class="modal" onclick="bd_closeConfirmModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h3 id="bd-confirm-title">Confirm</h3>
+    <div id="bd-confirm-body"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button id="bd-confirm-ok" style="flex:1;background:#8b0000;">Confirm</button>
+      <button class="secondary" onclick="bd_closeConfirmModal()" style="flex:0 0 auto;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- EDIT LOG MODAL -->
+<div id="bd-edit-modal" class="modal" onclick="bd_closeEditModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <h3 id="bd-edit-title">Edit Log</h3>
+    <div id="bd-edit-fields"></div>
+    <div style="display:flex;gap:8px;margin-top:14px;">
+      <button id="bd-edit-save" onclick="bd_saveEdit()" style="flex:1;">Save</button>
+      <button class="secondary" onclick="bd_closeEditModal()" style="flex:0 0 auto;">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- BOTTOM NAV -->
 <nav class="bottom-nav">
   <button id="bd-nav-birds"   onclick="bd_show('birds')"   class="active">Birds</button>
@@ -330,16 +370,90 @@ function bd_show(id) {
   }
 }
 
+// ===== PHOTO CAPTURE =====
+var bd_currentPhoto = null;
+
+function bd_photoFieldHTML() {
+  return "<label style='margin-top:12px;'>Photo (optional)</label>" +
+    "<div style='display:flex;gap:6px;margin-top:4px;'>" +
+      "<button type='button' onclick='bd_takeCameraPhoto()' style='flex:1;margin:0;padding:10px;font-size:14px;background:#333;'>Camera</button>" +
+      "<button type='button' onclick='bd_openGallery()' style='flex:1;margin:0;padding:10px;font-size:14px;background:#333;'>Gallery</button>" +
+      "<button type='button' id='bd-clear-photo-btn' onclick='bd_clearPhoto()' style='display:none;margin:0;padding:10px;font-size:14px;background:#8b0000;'>Clear</button>" +
+    "</div>" +
+    "<input type='file' id='bd-f-gallery' accept='image/*' style='display:none;' onchange='bd_handlePhoto(this)'>" +
+    "<input type='file' id='bd-f-camera' accept='image/*' capture='environment' style='display:none;' onchange='bd_handlePhoto(this)'>" +
+    "<div id='bd-photo-preview' style='margin-top:6px;'></div>";
+}
+
+function bd_openGallery() {
+  var el = document.getElementById("bd-f-gallery");
+  if (el) el.click();
+}
+
+function bd_takeCameraPhoto() {
+  if (window.AndroidBridge && window.AndroidBridge.takePhoto) {
+    window.AndroidBridge.takePhoto("bd_onAndroidPhoto");
+  } else {
+    var el = document.getElementById("bd-f-camera");
+    if (el) el.click();
+  }
+}
+
+function bd_onAndroidPhoto(dataUrl) {
+  if (!dataUrl) return;
+  var full = dataUrl.startsWith("data:") ? dataUrl : "data:image/jpeg;base64," + dataUrl;
+  bd_resizePhoto(full);
+}
+
+function bd_handlePhoto(input) {
+  var file = input.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { bd_resizePhoto(e.target.result); };
+  reader.readAsDataURL(file);
+}
+
+function bd_resizePhoto(src) {
+  var img = new Image();
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    var maxW = 800;
+    var ratio = Math.min(1, maxW / img.width);
+    canvas.width = img.width * ratio;
+    canvas.height = img.height * ratio;
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    bd_currentPhoto = canvas.toDataURL("image/jpeg", 0.7);
+    var preview = document.getElementById("bd-photo-preview");
+    if (preview) preview.innerHTML = "<img src='" + bd_currentPhoto + "' style='width:100%;border-radius:6px;margin-top:4px;'>";
+    var clearBtn = document.getElementById("bd-clear-photo-btn");
+    if (clearBtn) clearBtn.style.display = "inline-block";
+  };
+  img.src = src;
+}
+
+function bd_clearPhoto() {
+  bd_currentPhoto = null;
+  var preview = document.getElementById("bd-photo-preview");
+  if (preview) preview.innerHTML = "";
+  var clearBtn = document.getElementById("bd-clear-photo-btn");
+  if (clearBtn) clearBtn.style.display = "none";
+  ["bd-f-gallery","bd-f-camera"].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = "";
+  });
+}
+
 // Handle Android back button via popstate
 window.addEventListener("popstate", function(e) {
   // Close any open modal first
-  var modals = ["bd-log-modal","bd-bird-modal","bd-flock-modal","bd-species-modal"];
+  var modals = ["bd-log-modal","bd-bird-modal","bd-flock-modal","bd-species-modal","bd-confirm-modal","bd-edit-modal"];
   var closed = false;
   modals.forEach(function(id) {
     var m = document.getElementById(id);
     if (m && m.style.display === "block") { m.style.display = "none"; closed = true; }
   });
-  // Push state back so next back press also works
+  // Close photo viewer
+  var pv = document.getElementById("bd-photo-viewer");
+  if (pv && pv.style.display === "flex") { pv.style.display = "none"; closed = true; }
   if (window.history && window.history.pushState) {
     window.history.pushState({ tab: "birds" }, "", "#birds");
   }
@@ -539,8 +653,11 @@ async function bd_fetchAssets() {
     }
     var fetchedUUIDs = {};
     fetched.forEach(function(b) { if (b.uuid) fetchedUUIDs[b.uuid] = true; });
-    var localOnly = bd_birds.filter(function(b) { return (!b.uuid || !fetchedUUIDs[b.uuid]) && b.status !== "archived"; });
-    bd_birds = fetched.concat(feeders).concat(localOnly.filter(function(b) { return b.type !== "feeder"; }));
+    // Only keep local birds that were added locally (no uuid) and aren't archived
+    var localOnly = bd_birds.filter(function(b) {
+      return !b.uuid && b.status !== "archived" && b.type !== "feeder";
+    });
+    bd_birds = fetched.concat(feeders).concat(localOnly);
     localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
     if (el) { el.textContent = "Fetched " + fetched.length + " birds, " + feeders.length + " feeders"; el.style.color = "#3a7"; }
     bd_toast("Fetched " + fetched.length + " birds");
@@ -602,6 +719,7 @@ function bd_openLogSheet(id) {
   document.getElementById("bd-log-modal-title").textContent = "Log - " + (bird ? (bird.tag || bird.name || "Bird") : "Bird");
   var now = new Date(); now.setSeconds(0,0);
   document.getElementById("bd-log-time").value = now.toISOString().slice(0,16);
+  bd_currentPhoto = null;
   bd_renderLogFields();
   document.getElementById("bd-log-modal").style.display = "block";
 }
@@ -616,13 +734,13 @@ function bd_renderLogFields() {
   var t = document.getElementById("bd-log-type").value;
   var box = document.getElementById("bd-log-fields");
   if (t === "weight") {
-    box.innerHTML = "<label>Weight</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-weight' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-weight-unit' style='width:90px;margin:0;'><option>lbs</option><option>g</option><option>kg</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
+    box.innerHTML = "<label>Weight</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-weight' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-weight-unit' style='width:90px;margin:0;'><option>lbs</option><option>g</option><option>kg</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>" + bd_photoFieldHTML();
   } else if (t === "med") {
-    box.innerHTML = "<label>Medication</label><input id='bd-f-med' placeholder='Med name'><label>Dose</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-dose' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-dose-unit' style='width:90px;margin:0;'><option>ml</option><option>cc</option><option>mg</option><option>tablet</option></select></div><label>Route</label><select id='bd-f-route'><option>Oral</option><option>SQ</option><option>IM</option><option>Topical</option></select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
+    box.innerHTML = "<label>Medication</label><input id='bd-f-med' placeholder='Med name'><label>Dose</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-dose' type='number' step='0.01' placeholder='0.00' style='flex:1;'><select id='bd-f-dose-unit' style='width:90px;margin:0;'><option>ml</option><option>cc</option><option>mg</option><option>tablet</option></select></div><label>Route</label><select id='bd-f-route'><option>Oral</option><option>SQ</option><option>IM</option><option>Topical</option></select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>" + bd_photoFieldHTML();
   } else if (t === "obs") {
-    box.innerHTML = "<label>Observation</label><input id='bd-f-obs-title' placeholder='Brief title'><label>Details</label><textarea id='bd-f-notes' rows='3'></textarea>";
+    box.innerHTML = "<label>Observation</label><input id='bd-f-obs-title' placeholder='Brief title'><label>Details</label><textarea id='bd-f-notes' rows='3'></textarea>" + bd_photoFieldHTML();
   } else if (t === "proc") {
-    box.innerHTML = "<label>Procedure</label><input id='bd-f-proc' placeholder='e.g. Banding'><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea>";
+    box.innerHTML = "<label>Procedure</label><input id='bd-f-proc' placeholder='e.g. Banding'><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea>" + bd_photoFieldHTML();
   } else if (t === "mortality") {
     box.innerHTML = "<label>Cause</label><select id='bd-f-cause'><option>Unknown</option><option>Predator</option><option>Disease</option><option>Injury</option><option>Natural</option><option>Culled</option><option>Other</option></select><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea><p style='color:#c90;font-size:13px;margin-top:8px;'>This will archive the bird in farmOS on sync.</p>";
   } else if (t === "hatch") {
@@ -694,6 +812,7 @@ function bd_saveLog() {
     logData.logName    = "Feed - " + logData.feederName + " - " + dateStr;
     bd_stockDeductFeed(logData.feedType, parseFloat(logData.feedAmount), logData.feedUnit, logData.feederName, ts);
   }
+  if (bd_currentPhoto) { logData.photo = bd_currentPhoto; bd_currentPhoto = null; }
   bd_history.unshift(logData);
   bd_pending.push({ action: "log", log: logData, id: logData.id, synced: false });
   localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
@@ -862,9 +981,205 @@ function bd_renderHistory() {
   if (bd_histFilter === "feed")      logs = logs.filter(function(l) { return l.type === "feed"; });
   if (bd_histFilter === "mortality") logs = logs.filter(function(l) { return l.type === "mortality"; });
   if (!logs.length) { list.innerHTML = "<div class='box' style='color:#888;text-align:center;'>No logs yet.</div>"; return; }
-  list.innerHTML = logs.slice(0,100).map(function(l) {
-    return "<div class='log'><div class='log-top'><span class='log-bird'>" + (l.type === "egg" ? l.flock : (l.birdTag || l.birdName || "?")) + "</span><span class='log-type'>" + l.type + "</span>" + (!l.synced ? "<span style='color:#c90;font-size:11px;'>pending</span>" : "") + "</div><div class='log-detail'>" + bd_logSummary(l) + "</div><div class='log-time'>" + new Date(l.timeISO).toLocaleString() + "</div></div>";
-  }).join("");
+  list.innerHTML = "";
+  logs.slice(0,100).forEach(function(l) { list.appendChild(bd_makeLogEl(l)); });
+}
+
+function bd_makeLogEl(l) {
+  var d = document.createElement("div");
+  d.className = "log";
+  d.style.cursor = "pointer";
+  var birdLabel = l.type === "egg" ? (l.flock || "Eggs") : (l.birdTag || l.birdName || "?");
+  var syncTag = !l.synced ? "<span style='color:#c90;font-size:11px;margin-left:4px;'>pending</span>" : "";
+  var timeStr = l.timeISO ? new Date(l.timeISO).toLocaleString() : "";
+  var summary = bd_logSummary(l);
+  d.innerHTML =
+    "<div class='log-top'>" +
+      "<input type='checkbox' class='log-select' data-id='" + l.id + "' style='width:auto;margin:0 8px 0 0;' onclick='event.stopPropagation()'>" +
+      "<span class='log-bird'>" + birdLabel + "</span>" +
+      "<span class='log-type' style='margin-left:6px;'>" + l.type + "</span>" +
+      syncTag +
+      "<span class='log-arrow' style='margin-left:auto;color:#555;font-size:14px;'>&#x25BC;</span>" +
+    "</div>" +
+    "<div class='log-detail' style='margin-top:3px;'>" + summary + "</div>" +
+    "<div class='log-time'>" + timeStr + "</div>" +
+    "<div class='log-drawer'>" +
+      (l.photo ? "<img src='" + l.photo + "' style='width:100%;border-radius:6px;margin-top:6px;max-height:200px;object-fit:cover;cursor:zoom-in;' onclick='bd_openPhotoViewer(this.src)'>" : "") +
+      "<div style='display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;' id='bd-log-actions-" + l.id + "'></div>" +
+    "</div>";
+  d.onclick = function(e) {
+    if (e.target.tagName === "BUTTON" || e.target.tagName === "INPUT" || e.target.tagName === "IMG") return;
+    bd_toggleLogDrawer(d);
+  };
+  // Attach action buttons safely
+  var actDiv = d.querySelector("#bd-log-actions-" + l.id);
+  if (actDiv) {
+    var editBtn = document.createElement("button");
+    editBtn.textContent = "Edit";
+    editBtn.style.cssText = "padding:6px 12px;font-size:13px;margin:0;";
+    editBtn.onclick = function(e) { e.stopPropagation(); bd_editLog(l.id); };
+    var cloneBtn = document.createElement("button");
+    cloneBtn.textContent = "Clone";
+    cloneBtn.style.cssText = "padding:6px 12px;font-size:13px;margin:0;background:#4a3a7a;";
+    cloneBtn.onclick = function(e) { e.stopPropagation(); bd_cloneLog(l.id); };
+    var delBtn = document.createElement("button");
+    delBtn.textContent = "Delete";
+    delBtn.style.cssText = "padding:6px 12px;font-size:13px;margin:0;background:#8b0000;";
+    delBtn.onclick = function(e) { e.stopPropagation(); bd_deleteLog(l.id); };
+    actDiv.appendChild(editBtn);
+    actDiv.appendChild(cloneBtn);
+    actDiv.appendChild(delBtn);
+  }
+  return d;
+}
+
+function bd_toggleLogDrawer(el) {
+  var drawer = el.querySelector(".log-drawer");
+  var arrow  = el.querySelector(".log-arrow");
+  if (!drawer) return;
+  var open = drawer.style.display !== "none" && drawer.style.display !== "";
+  drawer.style.display = open ? "none" : "block";
+  if (arrow) arrow.innerHTML = open ? "&#x25BC;" : "&#x25B2;";
+}
+
+function bd_toggleSelectAll(checked) {
+  document.querySelectorAll(".log-select").forEach(function(cb) { cb.checked = checked; });
+}
+
+function bd_deleteSelected() {
+  var selected = [];
+  document.querySelectorAll(".log-select:checked").forEach(function(cb) { selected.push(cb.getAttribute("data-id")); });
+  if (!selected.length) return;
+  bd_showConfirm(
+    "Delete Selected Logs?",
+    "<p style='color:#ccc;'>" + selected.length + " log" + (selected.length > 1 ? "s" : "") + " will be deleted.</p><p style='color:#c66;'>This cannot be undone.</p>",
+    function() {
+      bd_history = bd_history.filter(function(l) { return selected.indexOf(l.id) < 0; });
+      // Remove from pending too
+      bd_pending = bd_pending.filter(function(p) { return !p.log || selected.indexOf(p.log.id) < 0; });
+      localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
+      localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
+      bd_updateSyncBadge();
+      var sa = document.getElementById("bd-select-all-logs");
+      if (sa) sa.checked = false;
+      bd_renderHistory();
+    }
+  );
+}
+
+function bd_deleteLog(id) {
+  var l = bd_history.filter(function(x) { return x.id === id; })[0];
+  if (!l) return;
+  var birdLabel = l.type === "egg" ? l.flock : (l.birdTag || l.birdName || "?");
+  bd_showConfirm(
+    "Delete this log?",
+    "<p style='color:#ccc;'><strong>" + birdLabel + "</strong> - " + l.type + "<br><span style='color:#888;font-size:13px;'>" + bd_logSummary(l) + "</span></p><p style='color:#c66;'>This cannot be undone.</p>",
+    function() {
+      bd_history = bd_history.filter(function(x) { return x.id !== id; });
+      bd_pending = bd_pending.filter(function(p) { return !p.log || p.log.id !== id; });
+      localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
+      localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
+      bd_updateSyncBadge();
+      bd_renderHistory();
+    }
+  );
+}
+
+function bd_cloneLog(id) {
+  var orig = bd_history.filter(function(l) { return l.id === id; })[0];
+  if (!orig) return;
+  var clone = JSON.parse(JSON.stringify(orig));
+  clone.id = Date.now() + "c" + Math.random().toString(36).slice(2,7);
+  clone.timeISO = new Date().toISOString();
+  clone.timestamp = String(Math.floor(Date.now()/1000));
+  clone.synced = false;
+  bd_history.unshift(clone);
+  bd_pending.push({ action: "log", log: clone, id: clone.id, synced: false });
+  localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
+  localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
+  bd_updateSyncBadge();
+  bd_renderHistory();
+  bd_toast("Cloned - edit if needed, then sync");
+}
+
+var bd_editingLogId = null;
+
+function bd_editLog(id) {
+  var l = bd_history.filter(function(x) { return x.id === id; })[0];
+  if (!l) return;
+  bd_editingLogId = id;
+  var birdLabel = l.type === "egg" ? l.flock : (l.birdTag || l.birdName || "?");
+  document.getElementById("bd-edit-title").textContent = "Edit - " + birdLabel + " - " + l.type;
+  var rawTime = l.timeISO ? new Date(l.timeISO) : new Date();
+  var localTime = rawTime.toISOString().slice(0,16);
+  var html = "<label>Time</label><input type='datetime-local' id='bd-ed-time' value='" + localTime + "'>";
+  html += "<label>Notes</label><textarea id='bd-ed-notes' rows='3'>" + (l.notes || "") + "</textarea>";
+  if (l.type === "weight") html = "<label>Time</label><input type='datetime-local' id='bd-ed-time' value='" + localTime + "'><label>Weight</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-ed-weight' type='number' step='0.01' value='" + (l.weight||"") + "' style='flex:1;'><select id='bd-ed-wunit' style='width:90px;margin:0;'><option" + (l.weightUnit==="lbs"?" selected":"") + ">lbs</option><option" + (l.weightUnit==="g"?" selected":"") + ">g</option><option" + (l.weightUnit==="kg"?" selected":"") + ">kg</option></select></div><label>Notes</label><textarea id='bd-ed-notes' rows='2'>" + (l.notes||"") + "</textarea>";
+  if (l.type === "med") html = "<label>Time</label><input type='datetime-local' id='bd-ed-time' value='" + localTime + "'><label>Medication</label><input id='bd-ed-med' value='" + (l.med||"") + "'><label>Dose</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-ed-dose' type='number' step='0.01' value='" + (l.dose||"") + "' style='flex:1;'><select id='bd-ed-dunit' style='width:90px;margin:0;'><option" + (l.doseUnit==="ml"?" selected":"") + ">ml</option><option" + (l.doseUnit==="cc"?" selected":"") + ">cc</option><option" + (l.doseUnit==="mg"?" selected":"") + ">mg</option></select></div><label>Notes</label><textarea id='bd-ed-notes' rows='2'>" + (l.notes||"") + "</textarea>";
+  document.getElementById("bd-edit-fields").innerHTML = html;
+  document.getElementById("bd-edit-modal").style.display = "block";
+}
+
+function bd_saveEdit() {
+  var l = bd_history.filter(function(x) { return x.id === bd_editingLogId; })[0];
+  if (!l) return;
+  var timeVal = document.getElementById("bd-ed-time") ? document.getElementById("bd-ed-time").value : null;
+  if (timeVal) { l.timeISO = new Date(timeVal).toISOString(); l.timestamp = String(Math.floor(new Date(timeVal).getTime()/1000)); }
+  var notesEl = document.getElementById("bd-ed-notes");
+  if (notesEl) l.notes = notesEl.value;
+  if (l.type === "weight") {
+    var wEl = document.getElementById("bd-ed-weight"); if (wEl) l.weight = wEl.value;
+    var wuEl = document.getElementById("bd-ed-wunit"); if (wuEl) l.weightUnit = wuEl.value;
+    l.logName = "Weight - " + (l.birdTag||l.birdName||"Bird") + " - " + l.timeISO.slice(0,10);
+  }
+  if (l.type === "med") {
+    var mEl = document.getElementById("bd-ed-med"); if (mEl) l.med = mEl.value;
+    var dEl = document.getElementById("bd-ed-dose"); if (dEl) l.dose = dEl.value;
+    var duEl = document.getElementById("bd-ed-dunit"); if (duEl) l.doseUnit = duEl.value;
+    l.logName = "Med - " + (l.med||"") + " - " + (l.birdTag||l.birdName||"Bird") + " - " + l.timeISO.slice(0,10);
+  }
+  l.synced = false;
+  // Update pending
+  var p = bd_pending.filter(function(x) { return x.id === l.id; })[0];
+  if (p) { p.log = l; p.synced = false; }
+  else { bd_pending.push({ action: "log", log: l, id: l.id, synced: false }); }
+  localStorage.setItem(BD_LS.history, JSON.stringify(bd_history));
+  localStorage.setItem(BD_LS.pending, JSON.stringify(bd_pending));
+  bd_updateSyncBadge();
+  document.getElementById("bd-edit-modal").style.display = "none";
+  bd_renderHistory();
+  bd_toast("Log updated");
+}
+
+function bd_showConfirm(title, body, onOk) {
+  document.getElementById("bd-confirm-title").textContent = title;
+  document.getElementById("bd-confirm-body").innerHTML = body;
+  document.getElementById("bd-confirm-ok").onclick = function() {
+    document.getElementById("bd-confirm-modal").style.display = "none";
+    onOk();
+  };
+  document.getElementById("bd-confirm-modal").style.display = "block";
+}
+
+function bd_closeConfirmModal(e) {
+  if (!e || e.target === document.getElementById("bd-confirm-modal")) document.getElementById("bd-confirm-modal").style.display = "none";
+}
+
+function bd_closeEditModal(e) {
+  if (!e || e.target === document.getElementById("bd-edit-modal")) document.getElementById("bd-edit-modal").style.display = "none";
+}
+
+function bd_openPhotoViewer(src) {
+  var v = document.getElementById("bd-photo-viewer");
+  var img = document.getElementById("bd-photo-viewer-img");
+  if (!v || !img || !src) return;
+  img.src = src;
+  v.style.display = "flex";
+}
+
+function bd_closePhotoViewer() {
+  var v = document.getElementById("bd-photo-viewer");
+  if (v) v.style.display = "none";
 }
 
 function bd_logSummary(l) {
