@@ -511,7 +511,8 @@ async function bd_fetchAssets() {
     });
     // Filter active only, map species from relationship
     var fetched = (data.data || []).filter(function(a) {
-      return a.attributes.archived === false || a.attributes.archived === null;
+      // archived is null/empty when active, or a date string when archived
+      return !a.attributes.archived;
     }).map(function(a) {
       var typeRel = a.relationships && a.relationships.animal_type && a.relationships.animal_type.data;
       var species = typeRel ? (typeMap[typeRel.id] || "") : "";
