@@ -539,7 +539,7 @@ async function bd_fetchAssets() {
     }
     var fetchedUUIDs = {};
     fetched.forEach(function(b) { if (b.uuid) fetchedUUIDs[b.uuid] = true; });
-    var localOnly = bd_birds.filter(function(b) { return !b.uuid || !fetchedUUIDs[b.uuid]; });
+    var localOnly = bd_birds.filter(function(b) { return (!b.uuid || !fetchedUUIDs[b.uuid]) && b.status !== "archived"; });
     bd_birds = fetched.concat(feeders).concat(localOnly.filter(function(b) { return b.type !== "feeder"; }));
     localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
     if (el) { el.textContent = "Fetched " + fetched.length + " birds, " + feeders.length + " feeders"; el.style.color = "#3a7"; }
