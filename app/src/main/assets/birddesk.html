@@ -38,6 +38,7 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
 .bird-card .bird-name { font-size:14px; color:#ccc; }
 .bird-card .bird-meta { font-size:13px; color:#888; margin-top:2px; }
 .bird-card .bird-icon { font-size:28px; }
+.bird-card .bird-thumb { width:46px; height:46px; border-radius:8px; object-fit:cover; cursor:zoom-in; flex-shrink:0; }
 .species-header { font-size:14px; font-weight:bold; color:#888; text-transform:uppercase; letter-spacing:1px; padding:10px 4px 4px; }
 .nest-card { background:#2a2a2a; border-radius:8px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:center; gap:10px; border-left:4px solid #68b; }
 .nest-card .nest-name { flex:1; font-size:16px; }
@@ -250,6 +251,15 @@ input:focus, select:focus, textarea:focus { outline:none; border-color:#3a7; }
     <select id="bd-bird-flock"></select>
     <label>Notes</label>
     <input id="bd-bird-notes" placeholder="Optional notes">
+    <label style="margin-top:12px;">Profile Photo (optional)</label>
+    <div style="display:flex;gap:6px;margin-top:4px;">
+      <button type="button" onclick="bd_birdTakeCamera()" style="flex:1;margin:0;padding:10px;font-size:14px;background:#333;">Camera</button>
+      <button type="button" onclick="bd_birdOpenGallery()" style="flex:1;margin:0;padding:10px;font-size:14px;background:#333;">Gallery</button>
+      <button type="button" id="bd-bird-clear-photo" onclick="bd_birdClearPhoto()" style="display:none;margin:0;padding:10px;font-size:14px;background:#8b0000;">Clear</button>
+    </div>
+    <input type="file" id="bd-bird-gallery" accept="image/*" style="display:none;" onchange="bd_birdHandlePhoto(this)">
+    <input type="file" id="bd-bird-camera" accept="image/*" capture="environment" style="display:none;" onchange="bd_birdHandlePhoto(this)">
+    <div id="bd-bird-photo-preview" style="margin-top:6px;"></div>
     <div style="display:flex;gap:8px;margin-top:14px;">
       <button onclick="bd_saveBird()" style="flex:1;">Save</button>
       <button class="secondary" onclick="bd_closeBirdModal()" style="flex:0 0 auto;">Cancel</button>
@@ -372,6 +382,56 @@ function bd_show(id) {
 
 // ===== PHOTO CAPTURE =====
 var bd_currentPhoto = null;
+var bd_currentBirdPhoto = null; // profile photo being edited (data URL or null)
+
+function bd_birdOpenGallery() { var el = document.getElementById("bd-bird-gallery"); if (el) el.click(); }
+function bd_birdTakeCamera() {
+  if (window.AndroidBridge && window.AndroidBridge.takePhoto) { window.AndroidBridge.takePhoto("bd_birdOnAndroidPhoto"); }
+  else { var el = document.getElementById("bd-bird-camera"); if (el) el.click(); }
+}
+function bd_birdOnAndroidPhoto(dataUrl) {
+  if (!dataUrl) return;
+  bd_birdResizePhoto(dataUrl.startsWith("data:") ? dataUrl : "data:image/jpeg;base64," + dataUrl);
+}
+function bd_birdHandlePhoto(input) {
+  var file = input.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) { bd_birdResizePhoto(e.target.result); };
+  reader.readAsDataURL(file);
+}
+function bd_birdResizePhoto(src) {
+  var img = new Image();
+  img.onload = function() {
+    var canvas = document.createElement("canvas");
+    var ratio = Math.min(1, 800 / img.width);
+    canvas.width = img.width * ratio; canvas.height = img.height * ratio;
+    canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height);
+    bd_currentBirdPhoto = canvas.toDataURL("image/jpeg", 0.7);
+    var p = document.getElementById("bd-bird-photo-preview");
+    if (p) p.innerHTML = "<img src='" + bd_currentBirdPhoto + "' style='width:100%;border-radius:6px;margin-top:4px;'>";
+    var cb = document.getElementById("bd-bird-clear-photo"); if (cb) cb.style.display = "inline-block";
+  };
+  img.src = src;
+}
+function bd_birdClearPhoto() {
+  bd_currentBirdPhoto = null;
+  var p = document.getElementById("bd-bird-photo-preview"); if (p) p.innerHTML = "";
+  var cb = document.getElementById("bd-bird-clear-photo"); if (cb) cb.style.display = "none";
+  ["bd-bird-gallery","bd-bird-camera"].forEach(function(id){ var el = document.getElementById(id); if (el) el.value = ""; });
+}
+function bd_birdShowPhoto(bird) {
+  var p = document.getElementById("bd-bird-photo-preview");
+  var cb = document.getElementById("bd-bird-clear-photo");
+  if (bird && bird.photo) {
+    bd_currentBirdPhoto = bird.photo;
+    if (p) p.innerHTML = "<img src='" + bird.photo + "' style='width:100%;border-radius:6px;margin-top:4px;'>";
+    if (cb) cb.style.display = "inline-block";
+  } else {
+    bd_currentBirdPhoto = null;
+    if (p) p.innerHTML = "";
+    if (cb) cb.style.display = "none";
+  }
+}
 
 function bd_photoFieldHTML() {
   return "<label style='margin-top:12px;'>Photo (optional)</label>" +
@@ -705,8 +765,11 @@ function bd_renderBirds() {
       groups[s].map(function(b) {
         var id = b.uuid || b._localId;
         var meta = [b.breed, b.sex === "F" ? "Female" : b.sex === "M" ? "Male" : "", b.flock ? b.flock : ""].filter(function(x) { return x; }).join(" - ");
+        var thumb = b.photo
+          ? "<img src='" + b.photo + "' class='bird-thumb' onclick=\"event.stopPropagation();bd_openPhotoViewer('" + b.photo + "')\">"
+          : "<div class='bird-icon'>" + bd_speciesIcon(b.species) + "</div>";
         return "<div class='bird-card' onclick=\"bd_openLogSheet('" + id + "')\">" +
-          "<div class='bird-icon'>" + bd_speciesIcon(b.species) + "</div>" +
+          thumb +
           "<div class='bird-info'><div class='bird-tag'>" + (b.tag || "") + "</div><div class='bird-name'>" + (b.name || "") + "</div><div class='bird-meta'>" + meta + "</div></div>" +
           "<button onclick=\"event.stopPropagation();bd_openEditBird('" + id + "')\" style='margin:0;padding:10px 14px;font-size:16px;background:#333;'>Edit</button>" +
           "</div>";
@@ -752,14 +815,14 @@ function bd_renderLogFields() {
   } else if (t === "proc") {
     box.innerHTML = "<label>Procedure</label><input id='bd-f-proc' placeholder='e.g. Banding'><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea>" + bd_photoFieldHTML();
   } else if (t === "mortality") {
-    box.innerHTML = "<label>Cause</label><select id='bd-f-cause'><option>Unknown</option><option>Predator</option><option>Disease</option><option>Injury</option><option>Natural</option><option>Culled</option><option>Other</option></select><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea><p style='color:#c90;font-size:13px;margin-top:8px;'>This will archive the bird in farmOS on sync.</p>";
+    box.innerHTML = "<label>Cause</label><select id='bd-f-cause'><option>Unknown</option><option>Predator</option><option>Disease</option><option>Injury</option><option>Natural</option><option>Culled</option><option>Other</option></select><label>Notes</label><textarea id='bd-f-notes' rows='2'></textarea><p style='color:#c90;font-size:13px;margin-top:8px;'>This will archive the bird in farmOS on sync.</p>" + bd_photoFieldHTML();
   } else if (t === "hatch") {
     var flockOpts = "<option value=''>-- No Flock --</option>" + bd_flocks.map(function(f) { return "<option>" + f.name + "</option>"; }).join("");
-    box.innerHTML = "<label>Species</label><select id='bd-f-hatch-species'><option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option></select><label>Breed</label><input id='bd-f-hatch-breed' placeholder='Breed (optional)'><label>Count</label><input id='bd-f-hatch-count' type='number' min='1' step='1' placeholder='e.g. 8'><label>Parent Tag (optional)</label><input id='bd-f-hatch-parent' placeholder='Mother tag'><label>Flock</label><select id='bd-f-hatch-flock'>" + flockOpts + "</select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'><p style='color:#888;font-size:13px;margin-top:8px;'>Creates placeholder birds. Tag each bird later.</p>";
+    box.innerHTML = "<label>Species</label><select id='bd-f-hatch-species'><option>Chicken</option><option>Duck</option><option>Goose</option><option>Other</option></select><label>Breed</label><input id='bd-f-hatch-breed' placeholder='Breed (optional)'><label>Count</label><input id='bd-f-hatch-count' type='number' min='1' step='1' placeholder='e.g. 8'><label>Parent Tag (optional)</label><input id='bd-f-hatch-parent' placeholder='Mother tag'><label>Flock</label><select id='bd-f-hatch-flock'>" + flockOpts + "</select><label>Notes</label><input id='bd-f-notes' placeholder='Optional'><p style='color:#888;font-size:13px;margin-top:8px;'>Creates placeholder birds. Tag each bird later.</p>" + bd_photoFieldHTML();
   } else if (t === "feed") {
     var feeders = bd_birds.filter(function(b) { return b.type === "feeder"; });
     var feederOpts = feeders.length ? feeders.map(function(f) { return "<option value='" + (f.uuid || f._localId) + "'>" + f.name + "</option>"; }).join("") : "<option value=''>No feeders - fetch from farmOS</option>";
-    box.innerHTML = "<label>Feeder</label><select id='bd-f-feeder'>" + feederOpts + "</select><label>Feed Type</label><input id='bd-f-feed-type' placeholder='e.g. Layer Pellets'><label>Amount</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-feed-amount' type='number' step='0.1' placeholder='0.0' style='flex:1;'><select id='bd-f-feed-unit' style='width:90px;margin:0;'><option>lbs</option><option>kg</option><option>cups</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>";
+    box.innerHTML = "<label>Feeder</label><select id='bd-f-feeder'>" + feederOpts + "</select><label>Feed Type</label><input id='bd-f-feed-type' placeholder='e.g. Layer Pellets'><label>Amount</label><div style='display:flex;gap:6px;margin-top:4px;'><input id='bd-f-feed-amount' type='number' step='0.1' placeholder='0.0' style='flex:1;'><select id='bd-f-feed-unit' style='width:90px;margin:0;'><option>lbs</option><option>kg</option><option>cups</option></select></div><label>Notes</label><input id='bd-f-notes' placeholder='Optional'>" + bd_photoFieldHTML();
   }
 }
 
@@ -858,6 +921,7 @@ function bd_openAddBird() {
   document.getElementById("bd-bird-sex").value = "";
   bd_updateBreedList();
   bd_populateFlock("bd-bird-flock");
+  bd_birdShowPhoto(null);
   document.getElementById("bd-bird-modal").style.display = "block";
 }
 
@@ -876,6 +940,7 @@ function bd_openEditBird(id) {
   document.getElementById("bd-bird-breed-custom").value = bird.breed || "";
   bd_updateBreedList();
   bd_populateFlock("bd-bird-flock", bird.flock);
+  bd_birdShowPhoto(bird);
   document.getElementById("bd-bird-modal").style.display = "block";
 }
 
@@ -906,9 +971,9 @@ function bd_saveBird() {
   if (!tag && !name) { bd_toast("Enter a tag or name"); return; }
   if (bd_editBirdId) {
     var bird = bd_birds.filter(function(b) { return (b.uuid || b._localId) === bd_editBirdId; })[0];
-    if (bird) { bird.tag = tag; bird.name = name; bird.species = species; bird.breed = breed; bird.sex = sex; bird.flock = flock; bird.notes = notes; bird.synced = false; if (bird.uuid) bd_pending.push({ action: "update_bird", birdUUID: bird.uuid, bird: bird, id: "upd_" + Date.now(), synced: false }); }
+    if (bird) { bird.tag = tag; bird.name = name; bird.species = species; bird.breed = breed; bird.sex = sex; bird.flock = flock; bird.notes = notes; bird.photo = bd_currentBirdPhoto || null; bird.synced = false; if (bird.uuid) bd_pending.push({ action: "update_bird", birdUUID: bird.uuid, bird: bird, id: "upd_" + Date.now(), synced: false }); }
   } else {
-    var nb = { _localId: "local_" + Date.now(), uuid: null, tag: tag, name: name, species: species, breed: breed, sex: sex, flock: flock, notes: notes, status: "active", synced: false };
+    var nb = { _localId: "local_" + Date.now(), uuid: null, tag: tag, name: name, species: species, breed: breed, sex: sex, flock: flock, notes: notes, photo: bd_currentBirdPhoto || null, status: "active", synced: false };
     bd_birds.push(nb); bd_pending.push({ action: "create_bird", bird: nb, id: nb._localId, synced: false });
   }
   localStorage.setItem(BD_LS.assets, JSON.stringify(bd_birds));
